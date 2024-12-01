@@ -1,7 +1,7 @@
 import cv2
 import mediapipe as mp
 import random
-
+import time
 # Import necessary components from MediaPipe Tasks
 BaseOptions = mp.tasks.BaseOptions
 GestureRecognizer = mp.tasks.vision.GestureRecognizer
@@ -110,42 +110,47 @@ with GestureRecognizer.create_from_options(options) as recognizer, mp_hands.Hand
             elif(winner=="Computer"):
                 print("Computer won")
             break
-        if key == ord('g'):  # 'g' key to capture a gesture
-            print("Capturing gesture...")
-            display_text = True  # Reset display
-            if (user_score==0 and computer_score==0):
-                winner=None
-            # Use MediaPipe Gesture Recognizer for user gesture
-            mp_image = mp.Image(image_format=mp.ImageFormat.SRGB, data=frame_rgb)
-            gesture_result = recognizer.recognize(mp_image)
-            user_gesture = get_user_gesture(gesture_result)
+        for text in ["ROCK", "PAPER", "SCISSORS", "SHOOT!"]:
+            cv2.putText(frame, text, (10, 300), cv2.FONT_HERSHEY_SIMPLEX, 1, (0, 0, 255), 2)
+            cv2.imshow('Gesture Recognition Game', frame)
+            cv2.waitKey(1000)  # Wait for 1 second
 
-            if user_gesture:
-                # Computer generates a random choice
-                computer_choice = random.choice(choices)
-                result = decide_winner(user_gesture, computer_choice)
-                if result == "User Wins!":
-                    user_score+=1
-                elif result == "Computer Wins!":
-                    computer_score+=1
-                elif result == "Draw":
-                    pass
-                if user_score==winning_score:
-                    print("User Wins the Game!")
-                    user_score=0
-                    computer_score=0
-                    winner='User'
-                elif computer_score==winning_score:
-                    print("Computer Wins the Game!")
-                    user_score=0
-                    computer_score=0
-                    winner='Computer'
+        print("Capturing gesture...")
+        display_text = True  # Reset display
+        if user_score == 0 and computer_score == 0:
+            winner = None
 
-                display_text = True  # Enable display of results
+        # Use MediaPipe Gesture Recognizer for user gesture
+        mp_image = mp.Image(image_format=mp.ImageFormat.SRGB, data=frame_rgb)
+        gesture_result = recognizer.recognize(mp_image)
+        user_gesture = get_user_gesture(gesture_result)
 
-                print(f"User: {user_gesture}, Computer: {computer_choice}, Result: {result}")
+        if user_gesture:
+            # Computer generates a random choice
+            computer_choice = random.choice(choices)
+            result = decide_winner(user_gesture, computer_choice)
+            if result == "User Wins!":
+                user_score += 1
+            elif result == "Computer Wins!":
+                computer_score += 1
+            elif result == "Draw":
+                pass
+            if user_score == winning_score:
+                print("User Wins the Game!")
+                user_score = 0
+                computer_score = 0
+                winner = 'User'
+            elif computer_score == winning_score:
+                print("Computer Wins the Game!")
+                user_score = 0
+                computer_score = 0
+                winner = 'Computer'
 
-        elif key == ord('q'):  # 'q' key to quit the program
+            display_text = True  # Enable display of results
+
+            print(f"User: {user_gesture}, Computer: {computer_choice}, Result: {result}")
+
+        if key == ord('q'):  # 'q' key to quit the program
             print("Exiting...")
             break
 
