@@ -1,0 +1,17 @@
+- Πρόγραμμα που ανοίγει κάμερα, μοντέλο που αναγνωρίζει gestures
+- Διεπαφή, τυχαια επιλογή κίνησης, success/failure μήνυμα
+- Επικοινωνία προγράμματος με άλλη συσκευή
+- Συσκευή που δέχεται το μήνυμα από το main και δονείται ή αναβοσβήνει ή οτιδήποτε
+- Ό,τι άλλο 
+
+
+
+
+===== GUI/Controllers =====
+- Customize Main Menu Screen, have insert user, change user in the same one
+- Game screen, where the feed from camera is shown, a button is pressed to play, score
+and Win/Lose state
+- Main RPS logic to be implemented
+- Send Camera Feed/Snapshot to AI model through AIController for Gesture Recognition
+- Store Data through ModelController, like users and scores (.txt or sqlite3)
+- Connect device buzzing with feedback from Win/Lose state

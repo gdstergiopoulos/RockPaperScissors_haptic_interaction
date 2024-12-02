@@ -1,0 +1,3 @@
+class AIController:
+    def __init__(self):
+        ...
