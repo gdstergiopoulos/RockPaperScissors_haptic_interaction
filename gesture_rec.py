@@ -1,6 +1,7 @@
 import cv2
 import mediapipe as mp
 import random
+import requests
 
 # Import necessary components from MediaPipe Tasks
 BaseOptions = mp.tasks.BaseOptions
@@ -61,6 +62,7 @@ with GestureRecognizer.create_from_options(options) as recognizer, mp_hands.Hand
     computer_score=0
     winning_score=3
     winner=None
+    started=False
     while True:
         
         # Capture a frame
@@ -98,6 +100,8 @@ with GestureRecognizer.create_from_options(options) as recognizer, mp_hands.Hand
                         cv2.putText(frame, "Press SPACE to continue", (190, 300), cv2.FONT_HERSHEY_SIMPLEX, 1, (0, 0, 255), 2)
             else:
                 cv2.putText(frame, "No gesture detected. Try again", (10, 50), cv2.FONT_HERSHEY_SIMPLEX, 1, (0, 0, 255), 2)
+        else:
+            cv2.putText(frame, "Press G to start the game", (190, 250), cv2.FONT_HERSHEY_SIMPLEX, 1, (0, 0, 255), 2)
             
        
             
@@ -132,11 +136,13 @@ with GestureRecognizer.create_from_options(options) as recognizer, mp_hands.Hand
                     pass
                 if user_score==winning_score:
                     print("User Wins the Game!")
+                    requests.get("https://maker.ifttt.com/trigger/win/with/key/pM1ozEUO5xiOUE5_g0RXgILQN8aLT3kw2KpVtTp-LRg")
                     user_score=0
                     computer_score=0
                     winner='User'
                 elif computer_score==winning_score:
                     print("Computer Wins the Game!")
+                    requests.get("https://maker.ifttt.com/trigger/loss/with/key/pM1ozEUO5xiOUE5_g0RXgILQN8aLT3kw2KpVtTp-LRg")
                     user_score=0
                     computer_score=0
                     winner='Computer'
