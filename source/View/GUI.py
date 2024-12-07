@@ -1,8 +1,8 @@
 import sys
 from PyQt5.QtWidgets import QApplication, QWidget, QVBoxLayout, QPushButton, QLabel, QHBoxLayout, QStackedWidget
 from PyQt5.QtWidgets import (
-    QListWidget, QComboBox, QSpinBox, QFormLayout, QFrame, QToolBox,
-    QLineEdit
+    QListWidget, QSpinBox, QFormLayout, QFrame, QToolBox,
+    QLineEdit, QMessageBox
 )
 from PyQt5.QtGui import QImage, QPixmap
 from PyQt5.QtCore import Qt
@@ -42,7 +42,8 @@ class GUI:
         main_layout.addWidget(self.stacked_widget)
         self.window.setLayout(main_layout)
         self.window.show()
-
+    
+    # ================== MAIN MENU PAGE ==================
     def createMainMenu(self):
         ''' Create the main menu '''
         self.main_menu = QWidget()
@@ -98,7 +99,11 @@ class GUI:
         left_layout.addStretch()
         
         # -------- Right Side --------
-        right_layout = QVBoxLayout()
+        right_widget = QWidget()  # Wrap right_layout in a QWidget
+        right_layout = QVBoxLayout(right_widget)
+
+        # background color to right_widget
+        # right_widget.setStyleSheet("background-color: #CFCFCF;")  # 
         
         # Current Username
         self.username_label = QLabel("Current User: User123")
@@ -141,7 +146,7 @@ class GUI:
         self.sign_in_button = QPushButton("Sign In")
         self.sign_in_button.setFixedSize(200, 50)
         self.sign_in_button.setStyleSheet(qstyle.orange_button_stylesheet)
-        # self.sign_in_button.clicked.connect(self.viewController.onSignInButtonClicked)
+        self.sign_in_button.clicked.connect(self.viewController.onSignInButtonClicked)
         
         # Add widgets to sign in layout
         sign_in_layout.addWidget(self.username_input_label)
@@ -222,11 +227,46 @@ class GUI:
         # -------- Combine Layouts --------
         main_layout.addLayout(left_layout, 3)  # Weight: Left takes more space
         main_layout.addWidget(line)  # Add the line between left and right layouts
-        main_layout.addLayout(right_layout, 1)  # Weight: Right takes less space
+        main_layout.addWidget(right_widget, 1)  # Weight: Right takes less space
         
         # Set the layout for the main menu
         self.main_menu.setLayout(main_layout)
 
+    # ------------------ Main Menu Page Methods ------------------
+    def showMainMenu(self):
+        ''' Show the main menu '''
+        self.stacked_widget.setCurrentWidget(self.main_menu)
+
+    def updateRecordedAttemptsList(self, attempts):
+        ''' Update the recorded attempts list '''
+        self.recorded_attempts_list.clear()
+        self.recorded_attempts_list.addItems(attempts)
+
+    def updateAllPlayersList(self, players):
+        ''' Update the all players list '''
+        self.all_players_list.clear()
+        self.all_players_list.addItems(players)
+
+    # ------------------ Getters ------------------
+    def getSignInUsername(self):
+        ''' Get the sign-in username '''
+        return self.username_input.text()
+    
+    def getSignInPassword(self):
+        ''' Get the sign-in password '''
+        return self.password_input.text()
+    
+    # ------------------ Setters ------------------
+    def setToolboxIndex(self, index):
+        ''' Set the toolbox index '''
+        self.toolbox.setCurrentIndex(index)
+    
+    def setCurrentUser(self, username):
+        ''' Set the current user '''
+        self.username_label.setText("Current User: " + username)
+    # ===========================================================
+
+    # ================== CAMERA VIEW PAGE ==================
     def createCameraView(self):
         ''' Create the camera view '''
         self.camera_view = QWidget()
@@ -245,10 +285,7 @@ class GUI:
         camera_view_layout.addWidget(self.image_label)
         self.camera_view.setLayout(camera_view_layout)
 
-    def showMainMenu(self):
-        ''' Show the main menu '''
-        self.stacked_widget.setCurrentWidget(self.main_menu)
-
+    # ------------------ Camera View Page Methods ------------------
     def showCameraImageFrames(self):
         ''' Show the camera and image frames '''
         self.stacked_widget.setCurrentWidget(self.camera_view)
@@ -258,6 +295,24 @@ class GUI:
         self.camera_label.setPixmap(QPixmap.fromImage(cameraFrame))
         self.image_label.setPixmap(QPixmap.fromImage(imageFrame))
         self.app.processEvents()
+    # ===========================================================
+
+    # ================== GENERAL METHODS ==================
+    def showSuccessMessage(self, msg):
+        ''' Show a success message '''
+        msg_box = QMessageBox()
+        msg_box.setIcon(QMessageBox.Information)
+        msg_box.setWindowTitle("Success")
+        msg_box.setText(msg)
+        msg_box.exec_()
+
+    def showErrorMessage(self, msg):
+        ''' Show an error message '''
+        msg_box = QMessageBox()
+        msg_box.setIcon(QMessageBox.Critical)
+        msg_box.setWindowTitle("Error")
+        msg_box.setText(msg)
+        msg_box.exec_()
 
     def startMainLoop(self):
         ''' Start the main loop '''

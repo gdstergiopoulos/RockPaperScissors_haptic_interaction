@@ -19,3 +19,15 @@ class ModelController:
             image = cv2.imread(path)
             images.append(image)
         return images
+    
+    def getRecordedAttempts(self, username):
+        ''' Get the recorded attempts '''
+        # return the recorded attempts
+        # for the given username
+        return ['fromModelController 1', 'Attempt 2', 'Attempt 3', 'Attempt 4', 'Attempt 5']
+    
+    def getAllPlayers(self):
+        ''' Get all players '''
+        # return all players
+        return ['fromModelController 1', 'Player 2', 'Player 3', 'Player 4', 'Player 5']
+        
