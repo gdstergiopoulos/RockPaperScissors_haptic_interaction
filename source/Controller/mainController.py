@@ -47,7 +47,7 @@ class MainController:
         ''' Get the recorded attempts '''
         current_user_name = self.getCurrentUser()["name"]
         if not current_user_name:
-            return ["Sign in to store and view recorded attempts"]
+            return ["Sign in to store and\n view recorded attempts"]
         return self.modelController.getRecordedAttempts(current_user_name)
 
     def getCurrentUser(self):
@@ -67,8 +67,24 @@ class MainController:
         # check if the user exists
         if username not in self.getAllPlayers():
             raise Exception('User does not exist')
+        # check if the password is correct
+        db_password = self.modelController.getPlayerPassword(username)
+        if db_password != password:
+            raise Exception('Incorrect password')
         self.signed_in = True
         self.signed_in_user = {"name": username, "password": password}
+    
+    def registerNewPlayer(self, username, password):
+        ''' Register a new player '''
+        # check if the user already exists
+        if username in self.getAllPlayers():
+            raise Exception('User already exists')
+        # register the new player
+        # add the player to the database
+        self.modelController.registerNewPlayer(username, password)
+        self.signed_in = True
+        self.signed_in_user = {"name": username, "password": password}
+
     #
     def showImages(self):
         ''' Show the images '''

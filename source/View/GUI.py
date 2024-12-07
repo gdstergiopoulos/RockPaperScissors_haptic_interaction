@@ -193,7 +193,7 @@ class GUI:
         self.register_button = QPushButton("Register")
         self.register_button.setFixedSize(200, 50)
         self.register_button.setStyleSheet(qstyle.orange_button_stylesheet)
-        # self.register_button.clicked.connect(self.viewController.onRegisterButtonClicked)
+        self.register_button.clicked.connect(self.viewController.onRegisterButtonClicked)
 
         # Add widgets to new user layout
         new_user_layout.addWidget(self.new_username_input_label)
@@ -256,6 +256,18 @@ class GUI:
         ''' Get the sign-in password '''
         return self.password_input.text()
     
+    def getRegisterUsername(self):
+        ''' Get the register username '''
+        return self.new_username_input.text()
+    
+    def getRegisterPassword(self):
+        ''' Get the register password '''
+        return self.new_password_input.text()
+    
+    def getRegisterConfirmPassword(self):
+        ''' Get the confirm password '''
+        return self.confirm_password_input.text()
+    
     # ------------------ Setters ------------------
     def setToolboxIndex(self, index):
         ''' Set the toolbox index '''
@@ -281,8 +293,15 @@ class GUI:
         self.image_label.setFixedSize(640, 480)
         self.image_label.setScaledContents(True)  # Scale the image to fit the label
 
+        # button to go back to the main menu
+        self.back_button = QPushButton("Back")
+        self.back_button.clicked.connect(self.viewController.onBackButtonClicked)
+        self.back_button.setFixedSize(100, 50)
+        self.back_button.setStyleSheet(qstyle.blue_button_stylesheet)
+
         camera_view_layout.addWidget(self.camera_label)
         camera_view_layout.addWidget(self.image_label)
+        camera_view_layout.addWidget(self.back_button)
         self.camera_view.setLayout(camera_view_layout)
 
     # ------------------ Camera View Page Methods ------------------

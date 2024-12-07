@@ -49,6 +49,40 @@ class ViewController:
         
         # update the recorded attempts list
         self.updateRecordedAttemptsList()
+    
+    def onRegisterButtonClicked(self):
+        ''' Handle the Register button click '''
+        # get the username and password from the GUI
+        username = self.gui.getRegisterUsername()
+        password = self.gui.getRegisterPassword()
+        confirm_password = self.gui.getRegisterConfirmPassword()
+        if not username or not password or not confirm_password:
+            self.gui.showErrorMessage('Please enter a username and password')
+            return
+        
+        # check if the passwords match
+        if password != confirm_password:
+            self.gui.showErrorMessage('Passwords do not match')
+            return
+        
+        # register the user
+        try:
+            self.mainController.registerNewPlayer(username, password)
+            self.gui.showSuccessMessage('Registered successfully!')
+            self.gui.setCurrentUser(username)
+            self.gui.setToolboxIndex(0)
+        except Exception as e:
+            errorMessage = 'Error registering: ' + str(e)
+            self.gui.showErrorMessage(errorMessage)
+        
+        # update the recorded attempts list
+        self.updateRecordedAttemptsList()
+        # update the all players list
+        self.updateAllPlayersList()
+    
+    def onBackButtonClicked(self):
+        ''' Handle the Back button click '''
+        self.gui.showMainMenu()
     # ===========================================================
 
     # ================== LIST WIDGET SELECTION HANDLERS ==================

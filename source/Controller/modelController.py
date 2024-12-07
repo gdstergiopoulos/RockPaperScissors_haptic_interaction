@@ -30,4 +30,14 @@ class ModelController:
         ''' Get all players '''
         # return all players
         return ['fromModelController 1', 'Player 2', 'Player 3', 'Player 4', 'Player 5']
-        
+    
+    def getPlayerPassword(self, username):
+        ''' Get the player password '''
+        # return the player password
+        return 'password'
+    
+    def registerNewPlayer(self, username, password):
+        ''' Register a new player '''
+        # register the new player
+        # add the player to the database
+        pass
