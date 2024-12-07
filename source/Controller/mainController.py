@@ -45,17 +45,24 @@ class MainController:
     # ----------------- Getters -----------------
     def getRecordedAttempts(self):
         ''' Get the recorded attempts '''
-        current_user_name = self.getCurrentUser()["name"]
+        current_user_name = self.getCurrentUsername()
         if not current_user_name:
             return ["Sign in to store and\n view recorded attempts"]
         return self.modelController.getRecordedAttempts(current_user_name)
 
-    def getCurrentUser(self):
+    def getCurrentUsername(self):
         ''' Get the current user '''
         if not self.signed_in:
-            return {"name": "", "password": None}
+            return ""
         else:
             return self.signed_in_user
+        
+    def getCurrentUserPassword(self):
+        ''' Get the current user password '''
+        if not self.signed_in:
+            return ""
+        else:
+            return self.modelController.getPlayerPassword(self.signed_in_user)
 
     def getAllPlayers(self):
         ''' Get all players '''
@@ -72,7 +79,7 @@ class MainController:
         if db_password != password:
             raise Exception('Incorrect password')
         self.signed_in = True
-        self.signed_in_user = {"name": username, "password": password}
+        self.signed_in_user = username
     
     def registerNewPlayer(self, username, password):
         ''' Register a new player '''
@@ -83,9 +90,13 @@ class MainController:
         # add the player to the database
         self.modelController.registerNewPlayer(username, password)
         self.signed_in = True
-        self.signed_in_user = {"name": username, "password": password}
+        self.signed_in_user = username
 
-    #
+    def signOut(self):
+        ''' Sign out the user '''
+        self.signed_in = False
+        self.signed_in_user = None
+
     def showImages(self):
         ''' Show the images '''
         images = self.modelController.getImages()
@@ -98,6 +109,18 @@ class MainController:
 
         # update the GUI
         self.viewController.updateGUIFrames()
+
+    def openCamera(self):
+        ''' Request the camera open from the cameraController '''
+        return self.cameraController.openCamera()
+
+    def updateCameraFrame(self):
+        ''' Request the frame from the cameraController '''
+        return self.cameraController.updateCameraFrame()
+    
+    def releaseCamera(self):
+        ''' Request the camera release from the cameraController '''
+        self.cameraController.releaseCamera()
 
     def showCameraFootage(self):
         ''' Debug: Show the camera feed '''

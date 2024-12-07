@@ -3,6 +3,7 @@ from PyQt5.QtGui import QImage
 from PyQt5.QtCore import Qt
 
 from View.GUI import GUI
+from View.CameraThread import CameraThread
 
 class ViewController:
     def __init__(self, mainController):
@@ -20,11 +21,13 @@ class ViewController:
         ''' Setup the GUI '''
         self.updateRecordedAttemptsList()
         self.updateAllPlayersList()
+        self.updateCurrentPlayer()
 
     # ================== BUTTON CLICK HANDLERS ==================
     def onStartButtonClicked(self):
         ''' Handle the Start Camera button click '''
-        self.mainController.showImages()
+        # self.mainController.showImages()
+        self.setupThread()
         self.gui.showCameraImageFrames()
 
     def onSignInButtonClicked(self):
@@ -79,13 +82,19 @@ class ViewController:
         self.updateRecordedAttemptsList()
         # update the all players list
         self.updateAllPlayersList()
+
+    def onSignOutButtonClicked(self):
+        ''' Handle the Sign Out button click '''
+        self.mainController.signOut()
+        self.setup() # reset the GUI
+        self.gui.showSuccessMessage('Signed out successfully!')
     
     def onBackButtonClicked(self):
         ''' Handle the Back button click '''
         self.gui.showMainMenu()
     # ===========================================================
 
-    # ================== LIST WIDGET SELECTION HANDLERS ==================
+    # ================== LIST WIDGET HANDLERS ==================
     def updateRecordedAttemptsList(self):
         ''' Update the recorded attempts list '''
         # request the recorded attempts from the main controller
@@ -106,6 +115,12 @@ class ViewController:
         except Exception as e:
             errorMessage = 'Error getting all players: ' + str(e)
             self.gui.showErrorMessage(errorMessage)
+    
+    def updateCurrentPlayer(self):
+        ''' Update the current player '''
+        # get the current user from the main controller
+        current_user = self.mainController.getCurrentUsername()
+        self.gui.setCurrentUser(current_user)
     # =====================================================================
     
     # ================== CAMERA/GAMEPLAY FRAME HANDLERS ==================
@@ -115,6 +130,26 @@ class ViewController:
         frame = cv2.resize(frame, (640, 480))
         frame = QImage(frame, frame.shape[1], frame.shape[0], QImage.Format_RGB888)
         return frame
+
+    # ------------------ CAMERA METHODS ------------------
+    def setupThread(self):
+        ''' Setup the camera thread '''
+        self.cameraThread = CameraThread(self)
+        # self.cameraThread.frame_ready.connect(self.gui.updateCameraFrame) # TODO
+        self.cameraThread.frame_ready.connect(lambda frame: print(f"Received frame: {type(frame)}"))
+        self.cameraThread.start()
+
+    def openCamera(self):
+        ''' Request from the main controller to open the camera '''
+        return self.mainController.openCamera()
+
+    def updateCameraFrame(self):
+        ''' Request the frame from the main controller '''
+        return self.mainController.updateCameraFrame()
+    
+    def releaseCamera(self):
+        ''' Request the main controller to release the camera '''
+        return self.mainController.releaseCamera()
 
     def setCameraFrame(self, frame):
         '''Set the camera frame'''

@@ -5,11 +5,11 @@ from PyQt5.QtWidgets import (
     QLineEdit, QMessageBox
 )
 from PyQt5.QtGui import QImage, QPixmap
-from PyQt5.QtCore import Qt
+from PyQt5.QtCore import pyqtSlot, QObject
 
 import View.QtStyling as qstyle
 
-class GUI:
+class GUI(QObject):
     def __init__(self, viewController):
         self.viewController = viewController
 
@@ -212,10 +212,19 @@ class GUI:
         # Add the new user widget to the toolbox
         self.toolbox.addItem(new_user_widget, "New User")
 
+        # -------- Sign Out Button --------
+        self.sign_out_button = QPushButton("Sign Out")
+        self.sign_out_button.setFixedSize(130, 50)
+        self.sign_out_button.setStyleSheet(qstyle.orange_button_stylesheet)
+        self.sign_out_button.clicked.connect(self.viewController.onSignOutButtonClicked)
+
+        # Add the sign out button to the toolbox
+        self.toolbox.addItem(self.sign_out_button, "Sign Out")
+
         # Add widgets to right layout
         right_layout.addWidget(self.username_label)
         right_layout.addWidget(self.toolbox)
-        # right_layout.addLayout(sign_in_layout)
+        # right_layout.addWidget(self.sign_out_button)
         right_layout.addStretch()  # Push items to the top
 
         # -------- Add Divider Line --------
@@ -282,7 +291,10 @@ class GUI:
     def createCameraView(self):
         ''' Create the camera view '''
         self.camera_view = QWidget()
-        camera_view_layout = QHBoxLayout()
+        camera_view_layout = QVBoxLayout()
+        
+        # Camera and Image Frames Layout
+        camera_image_frames_layout = QHBoxLayout()
 
         # label to display the camera feed
         self.camera_label = QLabel(self.camera_view)
@@ -293,21 +305,36 @@ class GUI:
         self.image_label.setFixedSize(640, 480)
         self.image_label.setScaledContents(True)  # Scale the image to fit the label
 
+        camera_image_frames_layout.addWidget(self.camera_label)
+        camera_image_frames_layout.addWidget(self.image_label)
+
+        # control buttons layout
+        control_buttons_layout = QHBoxLayout()
+
         # button to go back to the main menu
         self.back_button = QPushButton("Back")
         self.back_button.clicked.connect(self.viewController.onBackButtonClicked)
         self.back_button.setFixedSize(100, 50)
-        self.back_button.setStyleSheet(qstyle.blue_button_stylesheet)
+        self.back_button.setStyleSheet(qstyle.blue_button_stylesheet)        
 
-        camera_view_layout.addWidget(self.camera_label)
-        camera_view_layout.addWidget(self.image_label)
-        camera_view_layout.addWidget(self.back_button)
+        control_buttons_layout.addWidget(self.back_button)
+
+        camera_view_layout.addLayout(camera_image_frames_layout)
+        camera_view_layout.addLayout(control_buttons_layout)
+
         self.camera_view.setLayout(camera_view_layout)
 
     # ------------------ Camera View Page Methods ------------------
     def showCameraImageFrames(self):
         ''' Show the camera and image frames '''
         self.stacked_widget.setCurrentWidget(self.camera_view)
+
+    @pyqtSlot(QImage)
+    def updateCameraFrame(self, cameraFrame: QImage):
+        ''' Update the camera frame '''
+        print(f"Received frame: {type(cameraFrame)}")
+        self.camera_label.setPixmap(QPixmap.fromImage(cameraFrame))
+        self.app.processEvents()
 
     def updateGUIFrames(self, cameraFrame, imageFrame):
         ''' Update the GUI frames '''
