@@ -11,6 +11,7 @@ import View.QtStyling as qstyle
 
 class GUI(QObject):
     def __init__(self, viewController):
+        super().__init__() # So that QThread can be used, it requires a QObject
         self.viewController = viewController
 
         # Initialize the GUI
@@ -332,7 +333,6 @@ class GUI(QObject):
     @pyqtSlot(QImage)
     def updateCameraFrame(self, cameraFrame: QImage):
         ''' Update the camera frame '''
-        print(f"Received frame: {type(cameraFrame)}")
         self.camera_label.setPixmap(QPixmap.fromImage(cameraFrame))
         self.app.processEvents()
 

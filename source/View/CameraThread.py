@@ -36,10 +36,11 @@ class CameraThread(QThread):
                         raise Exception('Error: Invalid QImage object.')
                     
                     # Emit the frame to the GUI
-                    print(f"Emitting frame: {type(q_image)}")
+                    # print(f"Emitting frame: {type(q_image)}")
                     self.frame_ready.emit(q_image)
 
-                time.sleep(0.03)  # To avoid overwhelming the CPU (approx 30 FPS)
+                # time.sleep(0.03)  # To avoid overwhelming the CPU (approx 30 FPS)
+                time.sleep(0.018) # To avoid overwhelming the CPU (approx 60 FPS)
             # cap.release()
             # request the camera release from viewController --> mainController --> cameraController
             self.viewController.releaseCamera()

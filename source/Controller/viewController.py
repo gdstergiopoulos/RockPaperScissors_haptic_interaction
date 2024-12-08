@@ -85,9 +85,12 @@ class ViewController:
 
     def onSignOutButtonClicked(self):
         ''' Handle the Sign Out button click '''
-        self.mainController.signOut()
-        self.setup() # reset the GUI
-        self.gui.showSuccessMessage('Signed out successfully!')
+        if self.mainController.signed_in == True:    
+            self.mainController.signOut()
+            self.setup() # reset the GUI
+            self.gui.showSuccessMessage('Signed out successfully!')
+        else:
+            self.gui.showErrorMessage('No user is signed in')   
     
     def onBackButtonClicked(self):
         ''' Handle the Back button click '''
@@ -135,8 +138,8 @@ class ViewController:
     def setupThread(self):
         ''' Setup the camera thread '''
         self.cameraThread = CameraThread(self)
-        # self.cameraThread.frame_ready.connect(self.gui.updateCameraFrame) # TODO
-        self.cameraThread.frame_ready.connect(lambda frame: print(f"Received frame: {type(frame)}"))
+        self.cameraThread.frame_ready.connect(self.gui.updateCameraFrame)
+        # self.cameraThread.frame_ready.connect(lambda frame: print(f"Received frame: {type(frame)}"))
         self.cameraThread.start()
 
     def openCamera(self):
