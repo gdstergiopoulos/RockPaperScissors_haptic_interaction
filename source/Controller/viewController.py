@@ -168,6 +168,35 @@ class ViewController:
     def updateGUIFrames(self):
         ''' Update the GUI frames '''
         self.gui.updateGUIFrames(self.cameraFrame, self.imageFrame)
+
+    def showWinner(self, winner):
+        ''' Show the winner '''
+        self.gui.showWinner(winner)
+
+    # ------------------ GAMEPLAY METHODS ------------------
+    def playRound(self, frame):
+        ''' Pass the frame to the main controller to play a round '''
+        return self.mainController.playRound(frame)
+    
+    def handleScore(self, result):
+        ''' Ask the main controller to handle the score '''
+        return self.mainController.handleScore(result)
+    
+    def checkGameWinner(self):
+        ''' Ask the main controller to check the game winner '''
+        return self.mainController.checkGameWinner()
+    
+    def resetGame(self):
+        ''' Ask the main controller to reset the game '''
+        return self.mainController.resetGame()
+    
+    def getUserScore(self):
+        ''' Get the user score '''
+        return self.mainController.getUserScore()
+    
+    def getComputerScore(self):
+        ''' Get the computer score '''
+        return self.mainController.getComputerScore()
     # =================================================================
 
     # ================== GENERAL METHODS ==================

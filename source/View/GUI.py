@@ -341,6 +341,10 @@ class GUI(QObject):
         self.camera_label.setPixmap(QPixmap.fromImage(cameraFrame))
         self.image_label.setPixmap(QPixmap.fromImage(imageFrame))
         self.app.processEvents()
+
+    def showWinner(self, winner):
+        ''' Show the winner '''
+        self.showSuccessMessage(f"{winner} Wins!")
     # ===========================================================
 
     # ================== GENERAL METHODS ==================

@@ -14,6 +14,22 @@ class CameraThread(QThread):
         self.viewController = viewController
         self.running = True  # Control flag for the thread
 
+    def addTextToFrame(self, frame, user_gesture, computer_choice, result, winner):
+        # Add text to the frame
+        font = cv2.FONT_HERSHEY_SIMPLEX
+        font_scale = 1
+        font_color = (255, 255, 255)
+        line_type = 2
+        cv2.putText(frame, f'User: {user_gesture}', (10, 30), font, font_scale, font_color, line_type)
+        cv2.putText(frame, f'Computer: {computer_choice}', (10, 60), font, font_scale, font_color, line_type)
+        cv2.putText(frame, f'Result: {result}', (10, 90), font, font_scale, font_color, line_type)
+        cv2.putText(frame, f'User Score: {self.viewController.getUserScore()}', (10, 120), font, font_scale, font_color, line_type)
+        cv2.putText(frame, f'Computer Score: {self.viewController.getComputerScore()}', (10, 150), font, font_scale, font_color, line_type)
+
+        if winner:
+            cv2.putText(frame, f'Winner: {winner}', (200, 250), font, font_scale, font_color, line_type)
+            cv2.putText(frame, 'Press SPACE to restart.', (200, 300), font, font_scale, font_color, line_type)
+
     def run(self):
         # cap = cv2.VideoCapture(0)  # Open camera
         # request the camera open from viewController --> mainController --> cameraController
@@ -24,10 +40,15 @@ class CameraThread(QThread):
                 # request the frame from viewController --> mainController --> cameraController
                 ret, frame = self.viewController.updateCameraFrame()
                 if ret:
-                    # Process frame (AI or other analysis can go here)
-                    # request the analysis from viewController --> mainController --> AIController
-                    # frame = self.viewController.processFrame(frame)
-                    frame = cv2.cvtColor(frame, cv2.COLOR_BGR2RGB)  # Convert to RGB
+                    # initiate the game round
+                    frame, user_gesture, computer_choice, result = self.viewController.playRound(frame)
+                    # frame = cv2.cvtColor(frame, cv2.COLOR_BGR2RGB)  # Convert to RGB
+                    self.viewController.handleScore(result)
+                    haveWinner, winnerName = self.viewController.checkGameWinner()
+                    self.addTextToFrame(frame, user_gesture, computer_choice, result, winnerName)
+                    if haveWinner:
+                        # self.viewController.showWinner(winnerName)
+                        self.viewController.resetGame()
                     h, w, ch = frame.shape
                     bytes_per_line = ch * w
                     q_image = QImage(frame.data, w, h, bytes_per_line, QImage.Format_RGB888)

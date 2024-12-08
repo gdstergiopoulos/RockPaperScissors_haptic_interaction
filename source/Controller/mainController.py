@@ -1,5 +1,4 @@
-import cv2
-import sys
+import random
 
 from Controller.viewController import ViewController
 from Controller.modelController import ModelController
@@ -17,13 +16,19 @@ class MainController:
         self.signed_in = False
         self.signed_in_user = None
 
+        # gameplay variables
+        self.user_score = 0
+        self.computer_score = 0
+        self.winning_score = 3 # get from GUI
+        self.winner = None
+
         # Setup the controllers
         self.setupControllers()
 
     def initControllers(self):
         ''' Initialize the controllers '''
         self.cameraController = CameraController()
-        self.AIController = AIController()
+        self.AIController = AIController("./AI/gesture_recognizer.task")
         self.deviceController = DeviceController()
 
         # MVC architecture
@@ -68,6 +73,15 @@ class MainController:
         ''' Get all players '''
         return self.modelController.getAllPlayers()
     
+    def getUserScore(self):
+        ''' Get the user score '''
+        return self.user_score
+    
+    def getComputerScore(self):
+        ''' Get the computer score '''
+        return self.computer_score
+    
+    # ----------------- Sign in/Sign out/Register -----------------
     def signIn(self, username, password):
         ''' Sign in the user '''
         # sign in the user
@@ -97,6 +111,7 @@ class MainController:
         self.signed_in = False
         self.signed_in_user = None
 
+    # ----------------- Camera-related -----------------
     def showImages(self):
         ''' Show the images '''
         images = self.modelController.getImages()
@@ -121,6 +136,67 @@ class MainController:
     def releaseCamera(self):
         ''' Request the camera release from the cameraController '''
         self.cameraController.releaseCamera()
+
+    # ----------------- Gameplay -----------------
+    def playRound(self, frame):
+        ''' Play a round of the game:
+            - Process frame for hand landmarks
+            - Detect the user's gesture
+            - Decide the winner
+        '''
+        # Process frame for hand landmarks
+        frame_rgb, results_hands = self.AIController.processFrame(frame)
+        user_gesture = "none"
+
+        if results_hands.multi_hand_landmarks:
+            self.AIController.drawHandLandmarks(frame, results_hands.multi_hand_landmarks)
+            gesture_result = self.AIController.detectGesture(frame_rgb)
+            user_gesture = self.AIController.extractUserGesture(gesture_result)
+        
+        # computer_choice = self.AIController.getComputerChoice() # smarter decision-making
+        computer_choice = random.choice(["rock", "paper", "scissors"])
+        result = self.decideWinner(user_gesture, computer_choice)
+
+        return frame, user_gesture, computer_choice, result
+
+    def decideWinner(self, user_choice, computer_choice):
+        ''' Decide the winner '''
+        if user_choice == computer_choice:
+            return "Draw"
+        elif (user_choice == "rock" and computer_choice == "scissors") or \
+             (user_choice == "scissors" and computer_choice == "paper") or \
+             (user_choice == "paper" and computer_choice == "rock"):
+            return "User Wins!"
+        elif user_choice == "none":
+            return "No gesture detected. Try again."
+        else:
+            return "Computer Wins!"
+        
+    def handleScore(self, result):
+        ''' Handle the score '''
+        if result == "User Wins!":
+            self.user_score += 1
+        elif result == "Computer Wins!":
+            self.computer_score += 1
+        return None
+    
+    def checkGameWinner(self) -> tuple:
+        ''' Check the game winner 
+        Returns:
+            (bool, str): True if there is a winner, False otherwise. The winner's name'''
+        if self.user_score >= self.winning_score:
+            self.winner = "User"
+            return (True, self.winner)
+        elif self.computer_score >= self.winning_score:
+            self.winner = "Computer"
+            return (True, self.winner)
+        return (False, None)
+
+    def resetGame(self):
+        ''' Reset the game '''
+        self.user_score = 0
+        self.computer_score = 0
+        self.winner = None
 
     def showCameraFootage(self):
         ''' Debug: Show the camera feed '''
