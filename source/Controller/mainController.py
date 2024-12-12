@@ -6,7 +6,7 @@ from Controller.modelController import ModelController
 from Controller.cameraController import CameraController
 from Controller.AIController import AIController
 from Controller.deviceController import DeviceController
-import requests
+
 
 #===================================================================================================
 class MainController:
@@ -193,9 +193,11 @@ class MainController:
             (bool, str): True if there is a winner, False otherwise. The winner's name'''
         if self.user_score >= self.winning_score:
             self.winner = "User"
+            DeviceController.sendWinnerMessage()
             return (True, self.winner)
         elif self.computer_score >= self.winning_score:
             self.winner = "Computer"
+            DeviceController.sendLoserMessage()
             return (True, self.winner)
         return (False, None)
 
