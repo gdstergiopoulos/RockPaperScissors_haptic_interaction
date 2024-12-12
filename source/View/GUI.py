@@ -21,7 +21,7 @@ class GUI(QObject):
 
         self.window = QWidget()
         self.window.setWindowTitle('Camera with Gestures')
-        self.window.setFixedSize(1100, 700)  # fixed size of the window
+        self.window.setFixedSize(1100, 800)  # fixed size of the window
         self.window.setStyleSheet(qstyle.window_stylesheet)  # apply the dark theme
 
         self.BASE_IMAGE_PATH = "Model/images"
@@ -315,7 +315,8 @@ class GUI(QObject):
         # layout containing the camera footage
         self.user_layout = QVBoxLayout()
         self.camera_label = QLabel(self.camera_view)
-        self.camera_label.setFixedSize(490, 300)
+        self.camera_label.setFixedSize(400, 400)
+        self.camera_label.setStyleSheet("border: 1px solid black;")  # Add a border around the image
         self.user_layout.addWidget(self.camera_label)
 
         self.user_score = QLabel("User's Score: 0")
@@ -342,7 +343,8 @@ class GUI(QObject):
         # computer image layout
         self.computer_layout = QVBoxLayout()
         self.image_label = QLabel(self.camera_view)
-        self.image_label.setFixedSize(490, 300)
+        self.image_label.setFixedSize(400, 400)
+        self.image_label.setStyleSheet("border: 1px solid black;")  # Add a border around the image
         
 
         # Set the question mark image as the default image
@@ -462,8 +464,9 @@ class GUI(QObject):
         ''' Set the computer choice image, default to question mark initially '''
         if os.path.exists(image_path):
             pixmap = QPixmap(image_path)
-            self.image_label.setPixmap(pixmap.scaled(self.image_label.size(), aspectRatioMode=1))  # Scale image to fit the label
-
+            # self.image_label.setPixmap(pixmap.scaled(self.image_label.size(), aspectRatioMode=1))  # Scale image to fit the label
+            self.image_label.setPixmap(pixmap.scaled(400, 400, Qt.KeepAspectRatio))  # Scale image to fit the label
+    
     def updateComputerChoice(self, choice_image):
         ''' Update the computer's choice image when it makes its decision '''
         self.setComputerChoiceImage(choice_image)
