@@ -307,6 +307,10 @@ class GUI(QObject):
         #  Shows wins required to win the game
         self.top_label = QLabel("First to")
         self.top_label.setStyleSheet(qstyle.label_stylesheet)
+        self.top_label.setStyleSheet("""
+                    font-family: 'Arial';
+                    font-size: 28px;
+                    """)
         self.camera_view_layout.addWidget(self.top_label)
 
         # layout containing the camera footage and the computer image 
@@ -322,7 +326,15 @@ class GUI(QObject):
         self.user_score = QLabel("User's Score: 0")
         self.user_gesture = QLabel("User's Gesture: None")
         self.user_gesture.setStyleSheet(qstyle.label_stylesheet)
+        self.user_gesture.setStyleSheet("""
+                    font-family: 'Arial';
+                    font-size: 22px;
+                    """)
         self.user_score.setStyleSheet(qstyle.label_stylesheet)
+        self.user_score.setStyleSheet("""
+                    font-family: 'Arial';
+                    font-size: 22px;
+                    """)
         self.user_layout.addWidget(self.user_score)
         self.user_layout.addWidget(self.user_gesture)
 
@@ -356,7 +368,15 @@ class GUI(QObject):
         self.computer_score = QLabel("Computer's Score: 0")
         self.computer_gesture = QLabel("Computer's Gesture: None")
         self.computer_gesture.setStyleSheet(qstyle.label_stylesheet)
+        self.computer_gesture.setStyleSheet("""
+                    font-family: 'Arial';
+                    font-size: 22px;
+                    """)
         self.computer_score.setStyleSheet(qstyle.label_stylesheet)
+        self.computer_score.setStyleSheet("""
+                    font-family: 'Arial';
+                    font-size: 22px;
+                    """)
         self.computer_layout.addWidget(self.computer_score)
         self.computer_layout.addWidget(self.computer_gesture)
 
@@ -368,6 +388,10 @@ class GUI(QObject):
         self.result_layout = QVBoxLayout()
         self.result_area = QLabel("Round 1")
         self.result_area.setStyleSheet(qstyle.label_stylesheet)
+        self.result_area.setStyleSheet("""
+                    font-family: 'Arial';
+                    font-size: 24px;
+                    """)
         self.result_layout.addWidget(self.result_area)
         self.result_layout.setAlignment(Qt.AlignCenter)
         self.winner_area = QLabel("")
@@ -404,12 +428,19 @@ class GUI(QObject):
             self.result_area.setText(f"Round {text_info['Round']}: {text_info['Result']}")
         if "User Score" in text_info:
             self.user_score.setText(f"User's Score: {text_info['User Score']}")
+            self.user_score.setStyleSheet("""
+                    font-family: 'Arial';
+                    font-size: 22px;
+                    """)
         if "Computer Score" in text_info:
             self.computer_score.setText(f"Computer's Score: {text_info['Computer Score']}")
+            self.computer_score.setStyleSheet("""
+                    font-family: 'Arial';
+                    font-size: 22px;
+                    """)
         if "Winner" in text_info and text_info["Winner"] is not None:
             if text_info["Winner"]=="User":
                 self.winner_area.setText("You Won!")
-                self.winner_area.setStyleSheet("color: green;")
                 self.winner_area.setStyleSheet("""
                     font-family: 'Arial';
                     font-size: 32px;
