@@ -48,12 +48,12 @@ class MainController:
         self.viewController.startMainLoop()
     
     # ----------------- Getters -----------------
-    def getRecordedAttempts(self):
-        ''' Get the recorded attempts '''
+    def getRecordedGames(self):
+        ''' Get the recorded games '''
         current_user_name = self.getCurrentUsername()
         if not current_user_name:
-            return ["Sign in to store and\n view recorded attempts"]
-        return self.modelController.getRecordedAttempts(current_user_name)
+            return ["Sign in to store and\n view recorded games"]
+        return self.modelController.getRecordedGames(current_user_name)
 
     def getCurrentUsername(self):
         ''' Get the current user '''
@@ -80,6 +80,10 @@ class MainController:
     def getComputerScore(self):
         ''' Get the computer score '''
         return self.computer_score
+    
+    def getWinningScore(self):
+        ''' Get the score required to win '''
+        return self.winning_score
     
     # ----------------- Sign in/Sign out/Register -----------------
     def signIn(self, username, password):
@@ -156,7 +160,8 @@ class MainController:
         # computer_choice = self.AIController.getComputerChoice() # smarter decision-making
         computer_choice = random.choice(["rock", "paper", "scissors"])
         result = self.decideWinner(user_gesture, computer_choice)
-
+    
+        
         return frame, user_gesture, computer_choice, result
 
     def decideWinner(self, user_choice, computer_choice):
@@ -167,7 +172,7 @@ class MainController:
              (user_choice == "scissors" and computer_choice == "paper") or \
              (user_choice == "paper" and computer_choice == "rock"):
             return "User Wins!"
-        elif user_choice == "none":
+        elif user_choice == "none" or not user_choice:
             return "No gesture detected. Try again."
         else:
             return "Computer Wins!"
@@ -197,6 +202,10 @@ class MainController:
         self.user_score = 0
         self.computer_score = 0
         self.winner = None
+
+    def saveGame(self, winning_score, winner ):
+        ''' Pass game's parameters to the modelController to Save User's Game'''
+        return self.modelController.saveGame(winning_score, winner)
 
     def showCameraFootage(self):
         ''' Debug: Show the camera feed '''

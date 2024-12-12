@@ -1,3 +1,4 @@
+import os
 import sys
 from PyQt5.QtWidgets import QApplication, QWidget, QVBoxLayout, QPushButton, QLabel, QHBoxLayout, QStackedWidget
 from PyQt5.QtWidgets import (
@@ -5,7 +6,7 @@ from PyQt5.QtWidgets import (
     QLineEdit, QMessageBox
 )
 from PyQt5.QtGui import QImage, QPixmap
-from PyQt5.QtCore import pyqtSlot, QObject
+from PyQt5.QtCore import pyqtSlot, QObject, Qt
 
 import View.QtStyling as qstyle
 
@@ -22,6 +23,8 @@ class GUI(QObject):
         self.window.setWindowTitle('Camera with Gestures')
         self.window.setFixedSize(1100, 700)  # fixed size of the window
         self.window.setStyleSheet(qstyle.window_stylesheet)  # apply the dark theme
+
+        self.BASE_IMAGE_PATH = "Model/images"
 
         # Initialize the GUI
         self.initUI()
@@ -73,7 +76,7 @@ class GUI(QObject):
         button_layout.addStretch()
         
         # Number of wins required to decide the victor
-        self.wins_needed_label = QLabel("First to:")
+        self.wins_needed_label = QLabel("")
         # self.wins_needed_label.setStyleSheet(qstyle.label_stylesheet) 
         self.wins_needed_spinbox = QSpinBox()
         self.wins_needed_spinbox.setRange(1, 10)  # range of acceptable values
@@ -113,15 +116,15 @@ class GUI(QObject):
         # QToolBox for collapsible sections
         self.toolbox = QToolBox()
 
-        # Recorded Attempts List
-        self.recorded_attempts_list = QListWidget()
-        self.recorded_attempts_list.addItems(["Attempt 1", "Attempt 2", "Attempt 3"])  # TODO
-        self.recorded_attempts_list.setStyleSheet(qstyle.list_stylesheet)
-        self.toolbox.addItem(self.recorded_attempts_list, "Recorded Attempts")
+        # Recorded Games List
+        self.recorded_games_list = QListWidget()
+        self.recorded_games_list.addItems(["Attempt 1", "Attempt 2", "Attempt 3"])  
+        self.recorded_games_list.setStyleSheet(qstyle.list_stylesheet)
+        self.toolbox.addItem(self.recorded_games_list, "Recorded Games")
 
         # All Players List
         self.all_players_list = QListWidget()
-        self.all_players_list.addItems(["Player 1", "Player 2", "Player 3"])  # TODO
+        self.all_players_list.addItems(["Player 1", "Player 2", "Player 3"])  
         self.all_players_list.setStyleSheet(qstyle.list_stylesheet)
         self.toolbox.addItem(self.all_players_list, "All Players")
 
@@ -247,10 +250,10 @@ class GUI(QObject):
         ''' Show the main menu '''
         self.stacked_widget.setCurrentWidget(self.main_menu)
 
-    def updateRecordedAttemptsList(self, attempts):
-        ''' Update the recorded attempts list '''
-        self.recorded_attempts_list.clear()
-        self.recorded_attempts_list.addItems(attempts)
+    def updateRecordedGamesList(self, games):
+        ''' Update the recorded games list '''
+        self.recorded_games_list.clear()
+        self.recorded_games_list.addItems(games)
 
     def updateAllPlayersList(self, players):
         ''' Update the all players list '''
@@ -291,45 +294,148 @@ class GUI(QObject):
     # ================== CAMERA VIEW PAGE ==================
     def createCameraView(self):
         ''' Create the camera view '''
+        # create camera view widget
         self.camera_view = QWidget()
-        camera_view_layout = QVBoxLayout()
+
+        # main layout, that will hold all elements
+        self.camera_view_layout = QVBoxLayout()
         
-        # Camera and Image Frames Layout
-        camera_image_frames_layout = QHBoxLayout()
+        self.title_label = QLabel("Rock Paper Scissors with Gestures")
+        self.title_label.setStyleSheet(qstyle.header_stylesheet) 
+        self.camera_view_layout.addWidget(self.title_label)
 
-        # label to display the camera feed
+        #  Shows wins required to win the game
+        self.top_label = QLabel("First to")
+        self.top_label.setStyleSheet(qstyle.label_stylesheet)
+        self.camera_view_layout.addWidget(self.top_label)
+
+        # layout containing the camera footage and the computer image 
+        self.user_computer_layout = QHBoxLayout()
+
+        # layout containing the camera footage
+        self.user_layout = QVBoxLayout()
         self.camera_label = QLabel(self.camera_view)
-        self.camera_label.setFixedSize(640, 480)
+        self.camera_label.setFixedSize(490, 300)
+        self.user_layout.addWidget(self.camera_label)
 
-        # label to display random images
+        self.user_score = QLabel("User's Score: 0")
+        self.user_gesture = QLabel("User's Gesture: None")
+        self.user_gesture.setStyleSheet(qstyle.label_stylesheet)
+        self.user_score.setStyleSheet(qstyle.label_stylesheet)
+        self.user_layout.addWidget(self.user_score)
+        self.user_layout.addWidget(self.user_gesture)
+
+
+        self.user_computer_layout.addLayout(self.user_layout)
+
+        # VS Text layout
+        self.vs_layout = QVBoxLayout()
+        self.vs_label = QLabel("VS")
+        self.vs_layout.addWidget(self.vs_label)
+        self.vs_label.setStyleSheet(qstyle.header_stylesheet) 
+        self.vs_layout.setAlignment(self.vs_label, Qt.AlignCenter)        
+        # self.round_label = QLabel("Round 1")
+        # self.vs_layout.addWidget(self.round_label)
+        # self.vs_label.setStyleSheet(qstyle.header_stylesheet) 
+        # self.vs_layout.setAlignment(self.round_label, Qt.AlignCenter)
+
+        # computer image layout
+        self.computer_layout = QVBoxLayout()
         self.image_label = QLabel(self.camera_view)
-        self.image_label.setFixedSize(640, 480)
-        self.image_label.setScaledContents(True)  # Scale the image to fit the label
+        self.image_label.setFixedSize(490, 300)
+        
 
-        camera_image_frames_layout.addWidget(self.camera_label)
-        camera_image_frames_layout.addWidget(self.image_label)
+        # Set the question mark image as the default image
+        self.setComputerChoiceImage("question_mark")
+        self.computer_layout.setAlignment(self.camera_view, Qt.AlignCenter)
+        self.computer_layout.addWidget(self.image_label)
+        
 
-        # control buttons layout
-        control_buttons_layout = QHBoxLayout()
+        self.computer_score = QLabel("Computer's Score: 0")
+        self.computer_gesture = QLabel("Computer's Gesture: None")
+        self.computer_gesture.setStyleSheet(qstyle.label_stylesheet)
+        self.computer_score.setStyleSheet(qstyle.label_stylesheet)
+        self.computer_layout.addWidget(self.computer_score)
+        self.computer_layout.addWidget(self.computer_gesture)
 
+        self.user_computer_layout.addLayout(self.vs_layout)
+        self.user_computer_layout.addLayout(self.computer_layout)
+
+
+        # area containing the results of the game
+        self.result_layout = QVBoxLayout()
+        self.result_area = QLabel("Round 1")
+        self.result_area.setStyleSheet(qstyle.label_stylesheet)
+        self.result_layout.addWidget(self.result_area)
+        self.result_layout.setAlignment(Qt.AlignCenter)
+        self.winner_area = QLabel("")
+        self.winner_area.setStyleSheet(qstyle.label_stylesheet)
+        self.result_layout.addWidget(self.winner_area)
+        self.result_layout.setAlignment(Qt.AlignCenter)
+        
+        
         # button to go back to the main menu
         self.back_button = QPushButton("Back")
         self.back_button.clicked.connect(self.viewController.onBackButtonClicked)
         self.back_button.setFixedSize(100, 50)
         self.back_button.setStyleSheet(qstyle.blue_button_stylesheet)        
 
-        control_buttons_layout.addWidget(self.back_button)
+        self.camera_view_layout.addLayout(self.user_computer_layout)
+        # self.camera_view_layout.addWidget(self.bottom_text)
+        self.camera_view_layout.addLayout(self.result_layout)
+        self.camera_view_layout.addWidget(self.back_button)
 
-        camera_view_layout.addLayout(camera_image_frames_layout)
-        camera_view_layout.addLayout(control_buttons_layout)
+        self.camera_view.setLayout(self.camera_view_layout)
 
-        self.camera_view.setLayout(camera_view_layout)
 
     # ------------------ Camera View Page Methods ------------------
+
+    def update_text_areas(self, text_info):
+        """Update individual QLabel widgets based on text_info."""
+        if "User Gesture" in text_info:
+            self.user_gesture.setText(f"User's Gesture: {text_info['User Gesture']}")
+        if "Computer Choice" in text_info:
+            self.computer_gesture.setText(f"Computer's Gesture: {text_info['Computer Choice']}")
+            print(text_info['Computer Choice'])
+            self.updateComputerChoice(text_info['Computer Choice'])
+        if "Result" in text_info:
+            self.result_area.setText(f"Round {text_info['Round']}: {text_info['Result']}")
+        if "User Score" in text_info:
+            self.user_score.setText(f"User's Score: {text_info['User Score']}")
+        if "Computer Score" in text_info:
+            self.computer_score.setText(f"Computer's Score: {text_info['Computer Score']}")
+        if "Winner" in text_info and text_info["Winner"] is not None:
+            if text_info["Winner"]=="User":
+                self.winner_area.setText("You Won!")
+                # save the game in the database
+                # self.saveGame(text_info['User Score'], "user")
+            if text_info["Winner"]=="Computer":
+                self.winner_area.setText("You Lost :(")
+                # save the game in the database
+                # self.saveGame(text_info['Computer Score'], "Computer")
+        else:
+            self.winner_area.setText("")
+        
+    def saveGame(self,  winning_score, winner):
+        ''' Pass the game's parameters to the view controller'''
+        return self.viewController.saveGame(winning_score, winner)
+
     def showCameraImageFrames(self):
         ''' Show the camera and image frames '''
         self.stacked_widget.setCurrentWidget(self.camera_view)
 
+
+    def showLoadingMessage(self, msg):
+        self.loading_label = QLabel(msg, self.window)
+        self.loading_label.setAlignment(Qt.AlignCenter)
+        self.loading_label.setStyleSheet("font-size: 16px; color: blue;")
+        self.loading_label.show()
+
+    def hideLoadingMessage(self):
+        if hasattr(self, 'loading_label'):
+            self.loading_label.hide()
+
+            
     @pyqtSlot(QImage)
     def updateCameraFrame(self, cameraFrame: QImage):
         ''' Update the camera frame '''
@@ -342,9 +448,27 @@ class GUI(QObject):
         self.image_label.setPixmap(QPixmap.fromImage(imageFrame))
         self.app.processEvents()
 
+    def updateFirstToLabel(self, wins_required):
+        """ Update the 'First to #' label in the camera view """
+        self.top_label.setText(f"First To {wins_required} Wins!")  # Dynamically set the label
+
     def showWinner(self, winner):
         ''' Show the winner '''
         self.showSuccessMessage(f"{winner} Wins!")
+
+    def setComputerChoiceImage(self, image_name):
+        image_path = f"{self.BASE_IMAGE_PATH}/{image_name}.jpg"
+        print(image_path)
+        ''' Set the computer choice image, default to question mark initially '''
+        if os.path.exists(image_path):
+            pixmap = QPixmap(image_path)
+            self.image_label.setPixmap(pixmap.scaled(self.image_label.size(), aspectRatioMode=1))  # Scale image to fit the label
+
+    def updateComputerChoice(self, choice_image):
+        ''' Update the computer's choice image when it makes its decision '''
+        self.setComputerChoiceImage(choice_image)
+
+    
     # ===========================================================
 
     # ================== GENERAL METHODS ==================

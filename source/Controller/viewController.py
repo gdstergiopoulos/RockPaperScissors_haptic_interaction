@@ -4,6 +4,7 @@ from PyQt5.QtCore import Qt
 
 from View.GUI import GUI
 from View.CameraThread import CameraThread
+from PyQt5.QtCore import pyqtSlot
 
 class ViewController:
     def __init__(self, mainController):
@@ -19,7 +20,7 @@ class ViewController:
     
     def setup(self):
         ''' Setup the GUI '''
-        self.updateRecordedAttemptsList()
+        self.updateRecordedGamesList()
         self.updateAllPlayersList()
         self.updateCurrentPlayer()
 
@@ -27,6 +28,14 @@ class ViewController:
     def onStartButtonClicked(self):
         ''' Handle the Start Camera button click '''
         # self.mainController.showImages()
+
+        # Capture the number of wins required from the GUI
+        self.wins_required = self.gui.wins_needed_spinbox.value()  # Get the value from the SpinBox
+        
+        # Pass the value to the camera view to update the "First to #" label
+        self.gui.updateFirstToLabel(self.wins_required)  # This method will update the label in the camera view
+        
+        # Set up the camera thread and show the camera view
         self.setupThread()
         self.gui.showCameraImageFrames()
 
@@ -50,9 +59,10 @@ class ViewController:
             errorMessage = 'Error signing in: ' + str(e)
             self.gui.showErrorMessage(errorMessage)
         
-        # update the recorded attempts list
-        self.updateRecordedAttemptsList()
-    
+        # update the recorded Games list
+        self.updateRecordedGamesList()
+
+
     def onRegisterButtonClicked(self):
         ''' Handle the Register button click '''
         # get the username and password from the GUI
@@ -78,8 +88,8 @@ class ViewController:
             errorMessage = 'Error registering: ' + str(e)
             self.gui.showErrorMessage(errorMessage)
         
-        # update the recorded attempts list
-        self.updateRecordedAttemptsList()
+        # update the recorded Games list
+        self.updateRecordedGamesList()
         # update the all players list
         self.updateAllPlayersList()
 
@@ -95,18 +105,20 @@ class ViewController:
     def onBackButtonClicked(self):
         ''' Handle the Back button click '''
         self.gui.showMainMenu()
+
+    
     # ===========================================================
 
     # ================== LIST WIDGET HANDLERS ==================
-    def updateRecordedAttemptsList(self):
-        ''' Update the recorded attempts list '''
-        # request the recorded attempts from the main controller
+    def updateRecordedGamesList(self):
+        ''' Update the recorded Games list '''
+        # request the recorded Games from the main controller
         # for current user
         try:
-            recordedAttempts = self.mainController.getRecordedAttempts()
-            self.gui.updateRecordedAttemptsList(recordedAttempts)
+            recordedGames = self.mainController.getRecordedGames()
+            self.gui.updateRecordedGamesList(recordedGames)
         except Exception as e:
-            errorMessage = 'Error getting recorded attempts: ' + str(e)
+            errorMessage = 'Error getting recorded Games: ' + str(e)
             self.gui.showErrorMessage(errorMessage)
     
     def updateAllPlayersList(self):
@@ -139,6 +151,7 @@ class ViewController:
         ''' Setup the camera thread '''
         self.cameraThread = CameraThread(self)
         self.cameraThread.frame_ready.connect(self.gui.updateCameraFrame)
+        self.cameraThread.text_ready.connect(self.gui.update_text_areas)
         # self.cameraThread.frame_ready.connect(lambda frame: print(f"Received frame: {type(frame)}"))
         self.cameraThread.start()
 
@@ -173,6 +186,7 @@ class ViewController:
         ''' Show the winner '''
         self.gui.showWinner(winner)
 
+
     # ------------------ GAMEPLAY METHODS ------------------
     def playRound(self, frame):
         ''' Pass the frame to the main controller to play a round '''
@@ -188,6 +202,7 @@ class ViewController:
     
     def resetGame(self):
         ''' Ask the main controller to reset the game '''
+        self.gui.setComputerChoiceImage("question_mark")
         return self.mainController.resetGame()
     
     def getUserScore(self):
@@ -197,6 +212,13 @@ class ViewController:
     def getComputerScore(self):
         ''' Get the computer score '''
         return self.mainController.getComputerScore()
+    
+    # Save the game
+    def saveGame(self, winning_score, winner ):
+        '''Pass the game's parameters to the mainController'''
+        return self.mainController.saveGame(winning_score, winner)
+        
+        
     # =================================================================
 
     # ================== GENERAL METHODS ==================

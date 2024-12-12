@@ -7,66 +7,144 @@ import time
 
 class CameraThread(QThread):
     frame_ready = pyqtSignal(QImage)  # Signal to send frames to the GUI
+    text_ready = pyqtSignal(dict)
 
     def __init__(self, viewController, parent=None):
         super().__init__(parent)
 
         self.viewController = viewController
         self.running = True  # Control flag for the thread
+        self.round_delay = 3  # Delay time in seconds
 
-    def addTextToFrame(self, frame, user_gesture, computer_choice, result, winner):
-        # Add text to the frame
-        font = cv2.FONT_HERSHEY_SIMPLEX
-        font_scale = 1
-        font_color = (255, 255, 255)
-        line_type = 2
-        cv2.putText(frame, f'User: {user_gesture}', (10, 30), font, font_scale, font_color, line_type)
-        cv2.putText(frame, f'Computer: {computer_choice}', (10, 60), font, font_scale, font_color, line_type)
-        cv2.putText(frame, f'Result: {result}', (10, 90), font, font_scale, font_color, line_type)
-        cv2.putText(frame, f'User Score: {self.viewController.getUserScore()}', (10, 120), font, font_scale, font_color, line_type)
-        cv2.putText(frame, f'Computer Score: {self.viewController.getComputerScore()}', (10, 150), font, font_scale, font_color, line_type)
 
-        if winner:
-            cv2.putText(frame, f'Winner: {winner}', (200, 250), font, font_scale, font_color, line_type)
-            cv2.putText(frame, 'Press SPACE to restart.', (200, 300), font, font_scale, font_color, line_type)
+    # def run(self):
+    #     try:
+    #         self.viewController.openCamera()
+    #         while self.running:
+    #             ret, frame = self.viewController.updateCameraFrame()
+    #             if ret:
+    #                 # Initiate the game round
+    #                 frame, user_gesture, computer_choice, result = self.viewController.playRound(frame)
+    #                 frame = cv2.cvtColor(frame, cv2.COLOR_BGR2RGB)  # Convert to RGB
+    #                 self.viewController.handleScore(result)
+    #                 haveWinner, winnerName = self.viewController.checkGameWinner()
 
-    def run(self):
-        # cap = cv2.VideoCapture(0)  # Open camera
-        # request the camera open from viewController --> mainController --> cameraController
+    #                 # Collect text information for GUI display
+    #                 text_info = {
+    #                     "User Gesture": user_gesture,
+    #                     "Computer Choice": computer_choice,
+    #                     "Result": result,
+    #                     "User Score": self.viewController.getUserScore(),
+    #                     "Computer Score": self.viewController.getComputerScore(),
+    #                     "Winner": winnerName if haveWinner else None
+    #                 }
+
+    #                 # Emit the text information
+    #                 self.text_ready.emit(text_info)
+
+    #                 # if haveWinner:
+    #                 #     # self.viewController.resetGame()
+    #                 #     self.viewController.showWinner(winnerName)
+
+    #                 # Convert frame to QImage and emit it                    
+    #                 h, w, ch = frame.shape
+    #                 bytes_per_line = ch * w
+    #                 q_image = QImage(frame.data, w, h, bytes_per_line, QImage.Format_RGB888)
+
+    #                 if q_image.isNull():
+    #                     raise Exception('Error: Invalid QImage object.')
+
+    #                 self.frame_ready.emit(q_image)
+
+    #             time.sleep(0.018)  # ~60 FPS
+
+    #         self.viewController.releaseCamera()
+    #     except Exception as e:
+    #         raise Exception('Error in CameraThread: ' + str(e))
+
+    def run(self): 
         try:
             self.viewController.openCamera()
+            winner_found = False  # Track if a winner has been determined
+            round = 0
             while self.running:
-                # ret, frame = cap.read()
-                # request the frame from viewController --> mainController --> cameraController
+                # Wait for the user to make a choice
+                start_time = time.time()
+                while time.time() - start_time < self.round_delay:
+                    ret, frame = self.viewController.updateCameraFrame()
+                    if ret:
+                        # Show the frame without playing a round
+                        frame = cv2.cvtColor(frame, cv2.COLOR_BGR2RGB)
+                        h, w, ch = frame.shape
+                        bytes_per_line = ch * w
+                        q_image = QImage(frame.data, w, h, bytes_per_line, QImage.Format_RGB888)
+
+                        if q_image.isNull():
+                            raise Exception('Error: Invalid QImage object.')
+
+                        self.frame_ready.emit(q_image)
+
+                    time.sleep(0.018)  # Maintain the frame rate (~60 FPS)
+
+                if winner_found:
+                    # If there's already a winner, skip the game logic but keep the feed running
+                    continue
+
+                # if winner_found:
+                #     # If there's already a winner, skip the game logic but keep the feed running
+                #     # continue
+                #     winner_found = False
+                #     round = 1
+                #     self.viewController.resetGame()
+
+                # Start a round after the delay
                 ret, frame = self.viewController.updateCameraFrame()
                 if ret:
-                    # initiate the game round
                     frame, user_gesture, computer_choice, result = self.viewController.playRound(frame)
-                    # frame = cv2.cvtColor(frame, cv2.COLOR_BGR2RGB)  # Convert to RGB
                     self.viewController.handleScore(result)
                     haveWinner, winnerName = self.viewController.checkGameWinner()
-                    self.addTextToFrame(frame, user_gesture, computer_choice, result, winnerName)
+                    round += 1
                     if haveWinner:
-                        # self.viewController.showWinner(winnerName)
-                        self.viewController.resetGame()
+                        winner_found = True  # Stop the game logic for future rounds
+                        text_info = {
+                            "User Gesture": user_gesture,
+                            "Computer Choice": computer_choice,
+                            "Result": result,
+                            "User Score": self.viewController.getUserScore(),
+                            "Computer Score": self.viewController.getComputerScore(),
+                            "Winner": winnerName,
+                            "Round" : round
+                        }
+                    else:
+                        text_info = {
+                            "User Gesture": user_gesture,
+                            "Computer Choice": computer_choice,
+                            "Result": result,
+                            "User Score": self.viewController.getUserScore(),
+                            "Computer Score": self.viewController.getComputerScore(),
+                            "Winner": None,
+                            "Round" : round
+                        }
+
+                    # Emit the text information only if there's no winner
+                    self.text_ready.emit(text_info)
+
+                    frame = cv2.cvtColor(frame, cv2.COLOR_BGR2RGB)
                     h, w, ch = frame.shape
                     bytes_per_line = ch * w
                     q_image = QImage(frame.data, w, h, bytes_per_line, QImage.Format_RGB888)
-                    # Ensure the QImage object is valid before emitting
+
                     if q_image.isNull():
                         raise Exception('Error: Invalid QImage object.')
-                    
-                    # Emit the frame to the GUI
-                    # print(f"Emitting frame: {type(q_image)}")
+
                     self.frame_ready.emit(q_image)
 
-                # time.sleep(0.03)  # To avoid overwhelming the CPU (approx 30 FPS)
-                time.sleep(0.018) # To avoid overwhelming the CPU (approx 60 FPS)
-            # cap.release()
-            # request the camera release from viewController --> mainController --> cameraController
+                time.sleep(0.018)  # Maintain the frame rate (~60 FPS)
+
             self.viewController.releaseCamera()
         except Exception as e:
             raise Exception('Error in CameraThread: ' + str(e))
+
 
     def stop(self):
         self.running = False
