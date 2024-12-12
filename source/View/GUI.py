@@ -59,7 +59,7 @@ class GUI(QObject):
         left_layout = QVBoxLayout()
         
         # Title
-        self.title_label = QLabel("Rock Paper Scissors with Gestures")
+        self.title_label = QLabel("Rock Paper Scissors")
         self.title_label.setStyleSheet(qstyle.header_stylesheet)   
         
         # Start Game Button
@@ -300,7 +300,7 @@ class GUI(QObject):
         # main layout, that will hold all elements
         self.camera_view_layout = QVBoxLayout()
         
-        self.title_label = QLabel("Rock Paper Scissors with Gestures")
+        self.title_label = QLabel("Rock Paper Scissors")
         self.title_label.setStyleSheet(qstyle.header_stylesheet) 
         self.camera_view_layout.addWidget(self.title_label)
 
@@ -402,14 +402,14 @@ class GUI(QObject):
 
         # area containing the results of the game
         self.result_layout = QVBoxLayout()
-        self.result_area = QLabel("Round 1")
-        self.result_area.setStyleSheet(qstyle.label_stylesheet)
-        self.result_area.setStyleSheet("""
-                    font-family: 'Arial';
-                    font-size: 24px;
-                    """)
-        self.result_layout.addWidget(self.result_area)
-        self.result_layout.setAlignment(Qt.AlignCenter)
+        # self.result_area = QLabel("Round 1")
+        # self.result_area.setStyleSheet(qstyle.label_stylesheet)
+        # self.result_area.setStyleSheet("""
+        #             font-family: 'Arial';
+        #             font-size: 24px;
+        #             """)
+        # self.result_layout.addWidget(self.result_area)
+        # self.result_layout.setAlignment(Qt.AlignCenter)
         self.winner_area = QLabel("")
         self.winner_area.setStyleSheet(qstyle.label_stylesheet)
         self.result_layout.addWidget(self.winner_area)
@@ -445,7 +445,7 @@ class GUI(QObject):
                     self.result_label.setText("Try again.")
                 else:
                     self.result_label.setText(f"{text_info['Result']}")
-                self.result_area.setText(f"Round {text_info['Round']}: {text_info['Result']}")
+                # self.result_area.setText(f"Round {text_info['Round']}: {text_info['Result']}")
 
                 self.round_label.setText(f"Round {text_info['Round']}")
             if "User Score" in text_info:
