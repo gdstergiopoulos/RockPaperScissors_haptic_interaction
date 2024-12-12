@@ -409,11 +409,10 @@ class GUI(QObject):
         if "Winner" in text_info and text_info["Winner"] is not None:
             if text_info["Winner"]=="User":
                 self.winner_area.setText("You Won!")
-                self.winner_area.setStyleSheet("color: green;")
                 self.winner_area.setStyleSheet("""
                     font-family: 'Arial';
                     font-size: 32px;
-                    color: red;
+                    color: green;
                     """)
                 # save the game in the database
                 self.viewController.saveGame(text_info['User Score'], text_info["Winner"])
