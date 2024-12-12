@@ -101,6 +101,7 @@ class CameraThread(QThread):
                 ret, frame = self.viewController.updateCameraFrame()
                 if ret:
                     frame, user_gesture, computer_choice, result = self.viewController.playRound(frame)
+                    # frame = cv2.cvtColor(frame, cv2.COLOR_BGR2RGB)  # Convert to RGB
                     self.viewController.handleScore(result)
                     haveWinner, winnerName = self.viewController.checkGameWinner()
                     round += 1
