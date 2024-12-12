@@ -19,6 +19,7 @@ class CameraController:
             raise Exception('Error: Camera is not open.')
         
         ret, frame = self.cap.read()
+        frame = cv2.flip(frame, 1)
         if not ret:
             raise Exception('Error: Could not read frame.')
         self.frame = frame
