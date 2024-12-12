@@ -343,15 +343,31 @@ class GUI(QObject):
 
         # VS Text layout
         self.vs_layout = QVBoxLayout()
+        self.round_label = QLabel("Round 1")
+        self.vs_layout.addWidget(self.round_label)
+        self.round_label.setStyleSheet("""
+                    font-family: 'Arial';
+                    font-size: 24px;
+                    """)
+
         self.vs_label = QLabel("VS")
         self.vs_layout.addWidget(self.vs_label)
         self.vs_label.setStyleSheet(qstyle.header_stylesheet) 
-        self.vs_layout.setAlignment(self.vs_label, Qt.AlignCenter)        
-        # self.round_label = QLabel("Round 1")
-        # self.vs_layout.addWidget(self.round_label)
-        # self.vs_label.setStyleSheet(qstyle.header_stylesheet) 
-        # self.vs_layout.setAlignment(self.round_label, Qt.AlignCenter)
 
+        self.result_label = QLabel("")
+        self.vs_layout.addWidget(self.result_label)
+        self.result_label.setStyleSheet("""
+                    font-family: 'Arial';
+                    font-size: 24px;
+                    """)
+
+
+        self.vs_layout.setAlignment(self.vs_label, Qt.AlignCenter)   
+
+
+        self.vs_layout.addStretch()
+
+        
         # computer image layout
         self.computer_layout = QVBoxLayout()
         self.image_label = QLabel(self.camera_view)
@@ -425,7 +441,13 @@ class GUI(QObject):
                 self.computer_gesture.setText(f"Computer's Gesture: {text_info['Computer Choice']}")
                 self.updateComputerChoice(text_info['Computer Choice'])
             if "Result" in text_info:
+                if text_info['Result']=="No gesture detected. Try again.":
+                    self.result_label.setText("Try again.")
+                else:
+                    self.result_label.setText(f"{text_info['Result']}")
                 self.result_area.setText(f"Round {text_info['Round']}: {text_info['Result']}")
+
+                self.round_label.setText(f"Round {text_info['Round']}")
             if "User Score" in text_info:
                 self.user_score.setText(f"User's Score: {text_info['User Score']}")
             if "Computer Score" in text_info:
