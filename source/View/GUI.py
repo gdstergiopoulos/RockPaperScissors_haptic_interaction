@@ -409,18 +409,25 @@ class GUI(QObject):
         if "Winner" in text_info and text_info["Winner"] is not None:
             if text_info["Winner"]=="User":
                 self.winner_area.setText("You Won!")
+                self.winner_area.setStyleSheet("color: green;")
+                self.winner_area.setStyleSheet("""
+                    font-family: 'Arial';
+                    font-size: 32px;
+                    color: red;
+                    """)
                 # save the game in the database
-                # self.saveGame(text_info['User Score'], "user")
+                self.viewController.saveGame(text_info['User Score'], text_info["Winner"])
             if text_info["Winner"]=="Computer":
                 self.winner_area.setText("You Lost :(")
+                self.winner_area.setStyleSheet("""
+                    font-family: 'Arial';
+                    font-size: 32px;
+                    color: red;
+                    """)
                 # save the game in the database
-                # self.saveGame(text_info['Computer Score'], "Computer")
+                self.viewController.saveGame(text_info['Computer Score'], text_info["Winner"])
         else:
             self.winner_area.setText("")
-        
-    def saveGame(self,  winning_score, winner):
-        ''' Pass the game's parameters to the view controller'''
-        return self.viewController.saveGame(winning_score, winner)
 
     def showCameraImageFrames(self):
         ''' Show the camera and image frames '''
