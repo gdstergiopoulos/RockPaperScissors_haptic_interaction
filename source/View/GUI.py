@@ -413,7 +413,8 @@ class GUI(QObject):
                 self.winner_area.setStyleSheet("""
                     font-family: 'Arial';
                     font-size: 32px;
-                    color: red;
+                    font-weight: bold;
+                    color: green;
                     """)
                 # save the game in the database
                 self.viewController.saveGame(text_info['User Score'], text_info["Winner"])
@@ -422,6 +423,7 @@ class GUI(QObject):
                 self.winner_area.setStyleSheet("""
                     font-family: 'Arial';
                     font-size: 32px;
+                    font-style: strong;
                     color: red;
                     """)
                 # save the game in the database
@@ -449,6 +451,12 @@ class GUI(QObject):
     def updateCameraFrame(self, cameraFrame: QImage):
         ''' Update the camera frame '''
         self.camera_label.setPixmap(QPixmap.fromImage(cameraFrame))
+        self.app.processEvents()
+
+    @pyqtSlot(QImage)
+    def updateTimerImage(self, timerFrame: QImage):
+        ''' Update the timer image '''
+        self.image_label.setPixmap(QPixmap.fromImage(timerFrame))
         self.app.processEvents()
 
     def updateGUIFrames(self, cameraFrame, imageFrame):
