@@ -43,7 +43,11 @@ class CameraThread(QThread):
                     
                     if not winner_found:
                         # every integer second, show the image of the timer, e.g. 1, 2, 3
-                        if time.time() - start_time >= 0.5 and time.time() - start_time < 1:
+                        if time.time() - start_time >= 0 and time.time() - start_time < 0.5:
+                            # wait a bit before showing the timer
+                            # time.sleep(0.5)
+                            pass
+                        elif time.time() - start_time >= 0.5 and time.time() - start_time < 1:
                             self.timer_ready.emit(QImage(timer_images[2].data, timer_images[0].shape[1], timer_images[0].shape[0], timer_images[0].shape[1] * 3, QImage.Format_RGB888))
                         elif time.time() - start_time >= 1 and time.time() - start_time < 1.5:
                             self.timer_ready.emit(QImage(timer_images[1].data, timer_images[0].shape[1], timer_images[0].shape[0], timer_images[0].shape[1] * 3, QImage.Format_RGB888))
@@ -100,6 +104,7 @@ class CameraThread(QThread):
                         raise Exception('Error: Invalid QImage object.')
 
                     self.frame_ready.emit(q_image)
+                    time.sleep(1.5)
 
                 time.sleep(0.018)  # Maintain the frame rate (~60 FPS)
 
