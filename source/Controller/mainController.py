@@ -85,6 +85,9 @@ class MainController:
         ''' Get the score required to win '''
         return self.winning_score
     
+    def getTimerImages(self):
+        ''' Get the timer images '''
+        return self.modelController.getTimerImages()
     # ----------------- Setter -----------------
 
     def setWinningScore(self, winning_score):

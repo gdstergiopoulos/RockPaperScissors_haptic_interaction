@@ -21,6 +21,20 @@ class ModelController:
             images.append(image)
         return images
     
+    def getTimerImages(self):
+        ''' Get the timer images '''
+        # get the path to the folder containing the timer images
+        timer_folder = 'Model/images'
+
+        # Load and return the timer images
+        names = ['one.png', 'two.png', 'three.png']
+        timer_images = []
+        for name in names:
+            path = os.path.join(timer_folder, name)
+            image = cv2.imread(path)
+            timer_images.append(image)
+        return timer_images
+    
     def getRecordedGames(self, username):
         """
         Fetch and format recorded games for a specific user.

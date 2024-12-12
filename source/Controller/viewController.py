@@ -159,7 +159,7 @@ class ViewController:
         self.cameraThread = CameraThread(self)
         self.cameraThread.frame_ready.connect(self.gui.updateCameraFrame)
         self.cameraThread.text_ready.connect(self.gui.update_text_areas)
-        # self.cameraThread.frame_ready.connect(lambda frame: print(f"Received frame: {type(frame)}"))
+        self.cameraThread.timer_ready.connect(self.gui.updateTimerImage)
         self.cameraThread.start()
 
     def openCamera(self):
@@ -185,6 +185,10 @@ class ViewController:
         # Convert the frame to an image format that PyQt can handle
         self.imageFrame = self.frameToQImage(frame)
         return self.imageFrame
+    
+    def getTimerImages(self):
+        ''' Get the timer images '''
+        return self.mainController.getTimerImages()
 
     def updateGUIFrames(self):
         ''' Update the GUI frames '''
