@@ -6,7 +6,7 @@ from Controller.modelController import ModelController
 from Controller.cameraController import CameraController
 from Controller.AIController import AIController
 from Controller.deviceController import DeviceController
-
+import requests
 
 #===================================================================================================
 class MainController:
@@ -171,10 +171,12 @@ class MainController:
         elif (user_choice == "rock" and computer_choice == "scissors") or \
              (user_choice == "scissors" and computer_choice == "paper") or \
              (user_choice == "paper" and computer_choice == "rock"):
+            requests.get("https://maker.ifttt.com/trigger/win/with/key/pM1ozEUO5xiOUE5_g0RXgILQN8aLT3kw2KpVtTp-LRg")
             return "User Wins!"
         elif user_choice == "none" or not user_choice:
             return "No gesture detected. Try again."
         else:
+            requests.get("https://maker.ifttt.com/trigger/loss/with/key/pM1ozEUO5xiOUE5_g0RXgILQN8aLT3kw2KpVtTp-LRg")
             return "Computer Wins!"
         
     def handleScore(self, result):
