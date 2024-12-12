@@ -85,6 +85,12 @@ class MainController:
         ''' Get the score required to win '''
         return self.winning_score
     
+    # ----------------- Setter -----------------
+
+    def setWinningScore(self, winning_score):
+        self.winning_score = winning_score
+        return self.winning_score
+    
     # ----------------- Sign in/Sign out/Register -----------------
     def signIn(self, username, password):
         ''' Sign in the user '''
