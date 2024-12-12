@@ -76,7 +76,7 @@ class GUI(QObject):
         button_layout.addStretch()
         
         # Number of wins required to decide the victor
-        self.wins_needed_label = QLabel("")
+        self.wins_needed_label = QLabel("First to:")
         # self.wins_needed_label.setStyleSheet(qstyle.label_stylesheet) 
         self.wins_needed_spinbox = QSpinBox()
         self.wins_needed_spinbox.setRange(1, 10)  # range of acceptable values
