@@ -31,7 +31,7 @@ class ViewController:
 
         # Capture the number of wins required from the GUI
         self.wins_required = self.gui.wins_needed_spinbox.value()  # Get the value from the SpinBox
-        
+        self.mainController.setWinningScore(self.wins_required)
         # Pass the value to the camera view to update the "First to #" label
         self.gui.updateFirstToLabel(self.wins_required)  # This method will update the label in the camera view
         
