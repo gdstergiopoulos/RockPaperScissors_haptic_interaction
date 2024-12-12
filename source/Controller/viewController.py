@@ -104,7 +104,14 @@ class ViewController:
     
     def onBackButtonClicked(self):
         ''' Handle the Back button click '''
+        # self.releaseCamera()
         self.gui.showMainMenu()
+        # self.mainController.reopenCamera()
+        self.gui.update_text_areas('')
+        print("reset game")
+        self.resetGame()
+        print("setup")
+        self.setup()
 
     
     # ===========================================================
@@ -166,6 +173,7 @@ class ViewController:
     def releaseCamera(self):
         ''' Request the main controller to release the camera '''
         return self.mainController.releaseCamera()
+
 
     def setCameraFrame(self, frame):
         '''Set the camera frame'''

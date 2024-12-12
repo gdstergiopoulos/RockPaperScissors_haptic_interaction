@@ -150,6 +150,10 @@ class MainController:
         ''' Request the camera release from the cameraController '''
         self.cameraController.releaseCamera()
 
+    def reopenCamera(self):
+        '''Reopen camera'''
+        self.cameraController.reopenCamera()
+
     # ----------------- Gameplay -----------------
     def playRound(self, frame):
         ''' Play a round of the game:

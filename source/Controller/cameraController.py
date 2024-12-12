@@ -32,6 +32,17 @@ class CameraController:
             self.camera_is_open = False
         else:
             raise Exception('Error: Camera is not open.')
+        
+    def reopenCamera(self):
+        ''' Reopen the camera '''
+        # Release the camera if it is open
+        if self.camera_is_open:
+            self.releaseCamera()
+        
+        # Open the camera again
+        self.openCamera()
+        if not self.cap.isOpened():
+            raise Exception('Error: Could not reopen camera.')
 
     # CHECK NECESSITY OF THESE FUNCTIONS
     def initCamera(self):
@@ -64,6 +75,7 @@ class CameraController:
         self.updateCameraFrame()
         # cv2.imshow('Camera Feed', self.frame)
         cv2.imwrite('snapshot.jpg', self.frame)
+        
 
 if __name__ == '__main__':
     camera = CameraController()

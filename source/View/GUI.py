@@ -417,50 +417,49 @@ class GUI(QObject):
     # ------------------ Camera View Page Methods ------------------
 
     def update_text_areas(self, text_info):
-        """Update individual QLabel widgets based on text_info."""
-        if "User Gesture" in text_info:
-            self.user_gesture.setText(f"User's Gesture: {text_info['User Gesture']}")
-        if "Computer Choice" in text_info:
-            self.computer_gesture.setText(f"Computer's Gesture: {text_info['Computer Choice']}")
-            print(text_info['Computer Choice'])
-            self.updateComputerChoice(text_info['Computer Choice'])
-        if "Result" in text_info:
-            self.result_area.setText(f"Round {text_info['Round']}: {text_info['Result']}")
-        if "User Score" in text_info:
-            self.user_score.setText(f"User's Score: {text_info['User Score']}")
-            self.user_score.setStyleSheet("""
-                    font-family: 'Arial';
-                    font-size: 22px;
-                    """)
-        if "Computer Score" in text_info:
-            self.computer_score.setText(f"Computer's Score: {text_info['Computer Score']}")
-            self.computer_score.setStyleSheet("""
-                    font-family: 'Arial';
-                    font-size: 22px;
-                    """)
-        if "Winner" in text_info and text_info["Winner"] is not None:
-            if text_info["Winner"]=="User":
-                self.winner_area.setText("You Won!")
-                self.winner_area.setStyleSheet("""
-                    font-family: 'Arial';
-                    font-size: 32px;
-                    font-weight: bold;
-                    color: green;
-                    """)
-                # save the game in the database
-                self.viewController.saveGame(text_info['User Score'], text_info["Winner"])
-            if text_info["Winner"]=="Computer":
-                self.winner_area.setText("You Lost :(")
-                self.winner_area.setStyleSheet("""
-                    font-family: 'Arial';
-                    font-size: 32px;
-                    font-style: strong;
-                    color: red;
-                    """)
-                # save the game in the database
-                self.viewController.saveGame(text_info['Computer Score'], text_info["Winner"])
+        ''' Update individual QLabel widgets based on text_info.'''
+        if text_info:
+            if "User Gesture" in text_info:
+                self.user_gesture.setText(f"User's Gesture: {text_info['User Gesture']}")
+            if "Computer Choice" in text_info:
+                self.computer_gesture.setText(f"Computer's Gesture: {text_info['Computer Choice']}")
+                self.updateComputerChoice(text_info['Computer Choice'])
+            if "Result" in text_info:
+                self.result_area.setText(f"Round {text_info['Round']}: {text_info['Result']}")
+            if "User Score" in text_info:
+                self.user_score.setText(f"User's Score: {text_info['User Score']}")
+            if "Computer Score" in text_info:
+                self.computer_score.setText(f"Computer's Score: {text_info['Computer Score']}")
+            if "Winner" in text_info and text_info["Winner"] is not None:
+                if text_info["Winner"]=="User":
+                    self.winner_area.setText("You Won!")
+                    self.winner_area.setStyleSheet("""
+                        font-family: 'Arial';
+                        font-size: 32px;
+                        color: green;
+                        """)
+                    # save the game in the database
+                    self.viewController.saveGame(text_info['User Score'], text_info["Winner"])
+                if text_info["Winner"]=="Computer":
+                    self.winner_area.setText("You Lost :(")
+                    self.winner_area.setStyleSheet("""
+                        font-family: 'Arial';
+                        font-size: 32px;
+                        color: red;
+                        """)
+                    # save the game in the database
+                    self.viewController.saveGame(text_info['Computer Score'], text_info["Winner"])
+            else:
+                self.winner_area.setText("")
         else:
+            self.user_gesture.setText(f"User's Gesture: None")
+            self.computer_gesture.setText(f"Computer's Gesture: None")
+            self.updateComputerChoice('question_mark')
+            self.result_area.setText(f"Round 1")
+            self.user_score.setText(f"User's Score: 0")
+            self.computer_score.setText(f"Computer's Score: 0")
             self.winner_area.setText("")
+
 
     def showCameraImageFrames(self):
         ''' Show the camera and image frames '''
