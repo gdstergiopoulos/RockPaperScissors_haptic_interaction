@@ -426,15 +426,6 @@ class GUI(QObject):
                 self.viewController.saveGame(text_info['Computer Score'], text_info["Winner"])
         else:
             self.winner_area.setText("")
-<<<<<<< HEAD
-            
-        
-    def saveGame(self,  winning_score, winner):
-        ''' Pass the game's parameters to the view controller'''
-        return self.viewController.saveGame(winning_score, winner)
-=======
-
->>>>>>> 6681ee454feedaac55f5e9de5c6c19ab188df28b
 
     def showCameraImageFrames(self):
         ''' Show the camera and image frames '''
