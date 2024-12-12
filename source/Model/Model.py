@@ -88,7 +88,7 @@ class Model:
             return cursor.fetchall()
 
     # Save a game
-    def save_game(self, firstto, winner, userid):
+    def saveGame(self, firstto, winner, userid):
         with self._connect() as conn:
             cursor = conn.cursor()
             cursor.execute(INSERT_NEW_GAME, (firstto, winner, userid))

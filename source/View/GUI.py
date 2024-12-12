@@ -414,7 +414,7 @@ class GUI(QObject):
                     color: red;
                     """)
                 # save the game in the database
-                # self.saveGame(text_info['User Score'], "user")
+                self.viewController.saveGame(text_info['User Score'], text_info["Winner"])
             if text_info["Winner"]=="Computer":
                 self.winner_area.setText("You Lost :(")
                 self.winner_area.setStyleSheet("""
@@ -423,14 +423,18 @@ class GUI(QObject):
                     color: red;
                     """)
                 # save the game in the database
-                # self.saveGame(text_info['Computer Score'], "Computer")
+                self.viewController.saveGame(text_info['Computer Score'], text_info["Winner"])
         else:
             self.winner_area.setText("")
+<<<<<<< HEAD
             
         
     def saveGame(self,  winning_score, winner):
         ''' Pass the game's parameters to the view controller'''
         return self.viewController.saveGame(winning_score, winner)
+=======
+
+>>>>>>> 6681ee454feedaac55f5e9de5c6c19ab188df28b
 
     def showCameraImageFrames(self):
         ''' Show the camera and image frames '''

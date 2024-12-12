@@ -213,9 +213,12 @@ class MainController:
         self.computer_score = 0
         self.winner = None
 
-    def saveGame(self, winning_score, winner ):
+    def saveGame(self, winning_score, winner):
         ''' Pass game's parameters to the modelController to Save User's Game'''
-        return self.modelController.saveGame(winning_score, winner)
+        if not self.signed_in_user:
+            print("Not signed in user, game not saved")
+            return None
+        return self.modelController.saveGame(winning_score, winner, self.signed_in_user)
 
     def showCameraFootage(self):
         ''' Debug: Show the camera feed '''
