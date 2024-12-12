@@ -42,7 +42,7 @@ class CameraThread(QThread):
                 if ret:
                     # initiate the game round
                     frame, user_gesture, computer_choice, result = self.viewController.playRound(frame)
-                    # frame = cv2.cvtColor(frame, cv2.COLOR_BGR2RGB)  # Convert to RGB
+                    frame = cv2.cvtColor(frame, cv2.COLOR_BGR2RGB)  # Convert to RGB
                     self.viewController.handleScore(result)
                     haveWinner, winnerName = self.viewController.checkGameWinner()
                     self.addTextToFrame(frame, user_gesture, computer_choice, result, winnerName)
