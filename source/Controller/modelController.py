@@ -73,4 +73,5 @@ class ModelController:
         ''' Save user's game '''
         userid = self.model.get_userid(username)
         self.model.saveGame(winning_score, winner, userid)
+        print("User's Game Saved")
         return None

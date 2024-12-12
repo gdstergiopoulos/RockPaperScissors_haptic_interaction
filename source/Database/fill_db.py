@@ -49,7 +49,7 @@ def populate_games():
             cursor.execute("""
                 INSERT INTO Game (firstto, winner, userid)
                 VALUES (?, ?, ?);
-            """, (3, username, userid))
+            """, (3, "User", userid))
 
             # Game 2: Computer wins
             cursor.execute("""
