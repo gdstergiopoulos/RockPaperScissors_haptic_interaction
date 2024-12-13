@@ -112,7 +112,9 @@ class CameraThread(QThread):
 
             self.viewController.releaseCamera()
         except Exception as e:
-            raise Exception('Error in CameraThread: ' + str(e))
+            print(f"Error in CameraThread: {e}")
+            self.running = False
+
 
 
     def stop(self):

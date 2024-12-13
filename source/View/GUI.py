@@ -477,7 +477,7 @@ class GUI(QObject):
             self.user_gesture.setText(f"User's Gesture: None")
             self.computer_gesture.setText(f"Computer's Gesture: None")
             self.updateComputerChoice('question_mark')
-            self.result_area.setText(f"Round 1")
+            self.result_label.setText(f"Round 1")
             self.user_score.setText(f"User's Score: 0")
             self.computer_score.setText(f"Computer's Score: 0")
             self.winner_area.setText("")
@@ -526,9 +526,8 @@ class GUI(QObject):
         self.showSuccessMessage(f"{winner} Wins!")
 
     def setComputerChoiceImage(self, image_name):
-        image_path = f"{self.BASE_IMAGE_PATH}/{image_name}.jpg"
-        print(image_path)
         ''' Set the computer choice image, default to question mark initially '''
+        image_path = f"{self.BASE_IMAGE_PATH}/{image_name}.jpg"
         if os.path.exists(image_path):
             pixmap = QPixmap(image_path)
             # self.image_label.setPixmap(pixmap.scaled(self.image_label.size(), aspectRatioMode=1))  # Scale image to fit the label
@@ -537,7 +536,6 @@ class GUI(QObject):
     def updateComputerChoice(self, choice_image):
         ''' Update the computer's choice image when it makes its decision '''
         self.setComputerChoiceImage(choice_image)
-
     
     # ===========================================================
 
