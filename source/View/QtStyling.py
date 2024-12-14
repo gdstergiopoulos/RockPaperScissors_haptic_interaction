@@ -242,3 +242,25 @@ dark_theme_stylesheet = ("""
 # =================================================================== #
 # ======================= GAMEPLAY STYLESHEETS ====================== #
 # =================================================================== #
+enabled_button_stylesheet = """
+    QPushButton {
+        background-color: #007BFF;
+        color: white;
+        border: none;
+        padding: 10px;
+        border-radius: 5px;
+    }
+    QPushButton:hover {
+        background-color: #0056b3;
+    }
+"""
+
+disabled_button_stylesheet = """
+    QPushButton {
+        background-color: #A9A9A9;
+        color: #808080;
+        border: none;
+        padding: 10px;
+        border-radius: 5px;
+    }
+"""

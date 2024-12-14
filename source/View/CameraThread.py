@@ -9,6 +9,7 @@ class CameraThread(QThread):
     frame_ready = pyqtSignal(QImage)  # Signal to send frames to the GUI
     text_ready = pyqtSignal(dict)
     timer_ready = pyqtSignal(QImage)
+    winner_signal = pyqtSignal()
 
     def __init__(self, viewController, parent=None):
         super().__init__(parent)
@@ -74,6 +75,7 @@ class CameraThread(QThread):
                     round += 1
                     if haveWinner:
                         winner_found = True  # Stop the game logic for future rounds
+                        self.winner_signal.emit()
                         text_info = {
                             "User Gesture": user_gesture,
                             "Computer Choice": computer_choice,

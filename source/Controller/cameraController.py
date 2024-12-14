@@ -33,16 +33,22 @@ class CameraController:
         else:
             raise Exception('Error: Camera is not open.')
         
-    def reopenCamera(self):
-        ''' Reopen the camera '''
-        # Release the camera if it is open
+    def stopCamera(self):
         if self.camera_is_open:
             self.releaseCamera()
+        else:
+            print("Camera is already stopped.")
         
-        # Open the camera again
-        self.openCamera()
-        if not self.cap.isOpened():
-            raise Exception('Error: Could not reopen camera.')
+    # def reopenCamera(self):
+    #     ''' Reopen the camera '''
+    #     # Release the camera if it is open
+    #     if self.camera_is_open:
+    #         self.releaseCamera()
+        
+    #     # Open the camera again
+    #     self.openCamera()
+    #     if not self.cap.isOpened():
+    #         raise Exception('Error: Could not reopen camera.')
 
     # CHECK NECESSITY OF THESE FUNCTIONS
     def initCamera(self):

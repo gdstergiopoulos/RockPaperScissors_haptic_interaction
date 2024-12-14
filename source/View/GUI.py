@@ -343,26 +343,30 @@ class GUI(QObject):
 
         # VS Text layout
         self.vs_layout = QVBoxLayout()
-        self.round_label = QLabel("Round 1")
-        self.vs_layout.addWidget(self.round_label)
+        self.vs_layout.setAlignment(Qt.AlignCenter)  # Center the layout
+
+        self.round_label = QLabel("")
+        self.round_label.setAlignment(Qt.AlignCenter)  # Center the text within the label
         self.round_label.setStyleSheet("""
                     font-family: 'Arial';
                     font-size: 24px;
+                    font-weight: bold;
                     """)
+        self.vs_layout.addWidget(self.round_label)
 
         self.vs_label = QLabel("VS")
         self.vs_layout.addWidget(self.vs_label)
+        self.vs_label.setAlignment(Qt.AlignCenter)  # Center the text within the label
         self.vs_label.setStyleSheet(qstyle.header_stylesheet) 
 
         self.result_label = QLabel("")
+        self.result_label.setAlignment(Qt.AlignCenter)  # Center the text within the label
         self.vs_layout.addWidget(self.result_label)
         self.result_label.setStyleSheet("""
                     font-family: 'Arial';
                     font-size: 24px;
-                    """)
-
-
-        self.vs_layout.setAlignment(self.vs_label, Qt.AlignCenter)   
+                    font-weight: bold;
+                    """) 
 
 
         self.vs_layout.addStretch()
@@ -425,16 +429,17 @@ class GUI(QObject):
         self.back_button.setStyleSheet(qstyle.blue_button_stylesheet)     
 
 
-        # button to restart the game
-        self.restart_button = QPushButton("Restart")   
-        # self.restart_button.clicked.connect(self.viewController.onRestartButtonClicked)
-        self.restart_button.clicked.connect(self.viewController.onBackButtonClicked)
-        self.restart_button.setFixedSize(120,50)
-        self.restart_button.setStyleSheet(qstyle.blue_button_stylesheet)     
+        # button to play the game again
+        self.play_again_button = QPushButton("Play Again")   
+        self.play_again_button.clicked.connect(self.viewController.onPlayAgainButtonClicked)
+        self.play_again_button.setEnabled(False)
+        self.play_again_button.setStyleSheet(qstyle.disabled_button_stylesheet)
+        self.play_again_button.setFixedSize(150,50)
+        
 
         # add buttons to their layout
         self.buttons_layout.addWidget(self.back_button)
-        self.buttons_layout.addWidget(self.restart_button)
+        self.buttons_layout.addWidget(self.play_again_button)
 
         self.camera_view_layout.addLayout(self.user_computer_layout)
         # self.camera_view_layout.addWidget(self.bottom_text)
@@ -494,6 +499,8 @@ class GUI(QObject):
             self.user_score.setText(f"User's Score: 0")
             self.computer_score.setText(f"Computer's Score: 0")
             self.winner_area.setText("")
+            self.round_label.setText("")
+            self.result_label.setText("")
 
 
     def showCameraImageFrames(self):
@@ -511,6 +518,13 @@ class GUI(QObject):
         if hasattr(self, 'loading_label'):
             self.loading_label.hide()
 
+    def enablePlayAgainButton(self):
+        self.play_again_button.setEnabled(True)
+        self.play_again_button.setStyleSheet(qstyle.enabled_button_stylesheet)
+
+    def disablePlayAgainButton(self):
+        self.play_again_button.setEnabled(False)
+        self.play_again_button.setStyleSheet(qstyle.disabled_button_stylesheet)
             
     @pyqtSlot(QImage)
     def updateCameraFrame(self, cameraFrame: QImage):
@@ -532,7 +546,7 @@ class GUI(QObject):
 
     def updateFirstToLabel(self, wins_required):
         """ Update the 'First to #' label in the camera view """
-        self.top_label.setText(f"First To {wins_required} Wins!")  # Dynamically set the label
+        self.top_label.setText(f"First to {wins_required}, Wins!")  # Dynamically set the label
 
     def showWinner(self, winner):
         ''' Show the winner '''

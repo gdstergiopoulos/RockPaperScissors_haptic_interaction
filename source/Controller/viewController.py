@@ -34,10 +34,43 @@ class ViewController:
         self.mainController.setWinningScore(self.wins_required)
         # Pass the value to the camera view to update the "First to #" label
         self.gui.updateFirstToLabel(self.wins_required)  # This method will update the label in the camera view
-        
+    
+
         # Set up the camera thread and show the camera view
         self.setupThread()
+
+        self.gui.update_text_areas('')        
+
         self.gui.showCameraImageFrames()
+
+
+    def onBackButtonClicked(self):
+        ''' Handle the Back button click '''
+        self.mainController.stopCamera()
+        if self.cameraThread is not None:
+            self.cameraThread.quit()
+            # self.cameraThread.wait()
+        self.gui.showMainMenu()
+        self.setup()
+        self.resetGame()
+
+    def onPlayAgainButtonClicked(self):
+        ''' Handle the Restart button click '''
+
+        # Choice 1
+        self.gui.disablePlayAgainButton()
+        self.mainController.stopCamera()
+        if self.cameraThread is not None:
+            self.cameraThread.quit()
+            self.cameraThread.wait()
+        self.resetGame()
+        self.setupThread()
+        self.gui.update_text_areas('')
+
+        # Choice 2
+        # self.resetGame()
+        # self.gui.update_text_areas('')
+        
 
     def onSignInButtonClicked(self):
         ''' Handle the Sign In button click '''
@@ -102,17 +135,9 @@ class ViewController:
         else:
             self.gui.showErrorMessage('No user is signed in')   
     
-    def onBackButtonClicked(self):
-        ''' Handle the Back button click '''
-        self.releaseCamera()
-        self.cameraThread.quit()
-        self.gui.showMainMenu()
-        # self.mainController.reopenCamera()
-        self.gui.update_text_areas('')
-        print("reset game")
-        self.resetGame()
-        print("setup")
-        self.setup()
+    
+
+
 
     
     # ===========================================================
@@ -161,6 +186,7 @@ class ViewController:
         self.cameraThread.frame_ready.connect(self.gui.updateCameraFrame)
         self.cameraThread.text_ready.connect(self.gui.update_text_areas)
         self.cameraThread.timer_ready.connect(self.gui.updateTimerImage)
+        self.cameraThread.winner_signal.connect(self.onWinnerDetected)
         self.cameraThread.start()
 
     def openCamera(self):
@@ -199,6 +225,9 @@ class ViewController:
         ''' Show the winner '''
         self.gui.showWinner(winner)
 
+    def onWinnerDetected(self):
+        ''' Slot to handle winner detection '''
+        self.gui.enablePlayAgainButton()
 
     # ------------------ GAMEPLAY METHODS ------------------
     def playRound(self, frame):

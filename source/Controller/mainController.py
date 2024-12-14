@@ -146,13 +146,9 @@ class MainController:
         ''' Request the frame from the cameraController '''
         return self.cameraController.updateCameraFrame()
     
-    def releaseCamera(self):
-        ''' Request the camera release from the cameraController '''
-        self.cameraController.releaseCamera()
-
-    def reopenCamera(self):
-        '''Reopen camera'''
-        self.cameraController.reopenCamera()
+    def stopCamera(self):
+        ''' Request the camera stop from the cameraController '''
+        return self.cameraController.stopCamera()
 
     # ----------------- Gameplay -----------------
     def playRound(self, frame):

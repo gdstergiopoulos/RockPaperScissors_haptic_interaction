@@ -49,7 +49,7 @@ class ModelController:
             for game in games:
                 game_id, firstto, winner = game
                 # Format the output based on the winner
-                if winner == username:
+                if winner == "User":
                     formatted_games.append(f"You Won! You were first to {firstto}")
                 elif winner == "Computer":
                     formatted_games.append(f"You Lost :( Computer was first to {firstto}")
