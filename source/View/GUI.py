@@ -539,9 +539,8 @@ class GUI(QObject):
         self.showSuccessMessage(f"{winner} Wins!")
 
     def setComputerChoiceImage(self, image_name):
-        image_path = f"{self.BASE_IMAGE_PATH}/{image_name}.jpg"
-        print(image_path)
         ''' Set the computer choice image, default to question mark initially '''
+        image_path = f"{self.BASE_IMAGE_PATH}/{image_name}.jpg"
         if os.path.exists(image_path):
             pixmap = QPixmap(image_path)
             # self.image_label.setPixmap(pixmap.scaled(self.image_label.size(), aspectRatioMode=1))  # Scale image to fit the label
@@ -550,7 +549,6 @@ class GUI(QObject):
     def updateComputerChoice(self, choice_image):
         ''' Update the computer's choice image when it makes its decision '''
         self.setComputerChoiceImage(choice_image)
-
     
     # ===========================================================
 

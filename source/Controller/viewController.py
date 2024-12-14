@@ -104,7 +104,8 @@ class ViewController:
     
     def onBackButtonClicked(self):
         ''' Handle the Back button click '''
-        # self.releaseCamera()
+        self.releaseCamera()
+        self.cameraThread.quit()
         self.gui.showMainMenu()
         # self.mainController.reopenCamera()
         self.gui.update_text_areas('')
@@ -241,6 +242,10 @@ class ViewController:
     def keyPressEvent(self, event):
         if event.key() == Qt.Key_Q or event.key() == Qt.Key_Escape:
             self.gui.window.close()
+    
+    def on_exit(self):
+        ''' Handle the exit '''
+        self.gui.window.close()
 
 if __name__ == '__main__':
     controller = ViewController(None)

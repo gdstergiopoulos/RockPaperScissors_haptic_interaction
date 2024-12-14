@@ -231,10 +231,17 @@ class MainController:
         ''' Debug: Show the camera feed '''
         self.cameraController._viewCameraLoop()
 
+    def on_exit(self):
+        ''' Handle the exit process '''
+        self.releaseCamera()
+        self.viewController.on_exit()
+        print("Exiting the application")
+
     
 
 if __name__ == '__main__':
     # app = QApplication(sys.argv)
     controller = MainController()
     controller.run()
+    
     
