@@ -413,20 +413,33 @@ class GUI(QObject):
         self.winner_area = QLabel("")
         self.winner_area.setStyleSheet(qstyle.label_stylesheet)
         self.result_layout.addWidget(self.winner_area)
-        self.result_layout.setAlignment(Qt.AlignCenter)
+        self.winner_area.setAlignment(Qt.AlignCenter)
         
+
+        self.buttons_layout = QHBoxLayout()
         
         # button to go back to the main menu
         self.back_button = QPushButton("Back")
         self.back_button.clicked.connect(self.viewController.onBackButtonClicked)
         self.back_button.setFixedSize(100, 50)
-        self.back_button.setStyleSheet(qstyle.blue_button_stylesheet)        
+        self.back_button.setStyleSheet(qstyle.blue_button_stylesheet)     
+
+
+        # button to restart the game
+        self.restart_button = QPushButton("Restart")   
+        # self.restart_button.clicked.connect(self.viewController.onRestartButtonClicked)
+        self.restart_button.clicked.connect(self.viewController.onBackButtonClicked)
+        self.restart_button.setFixedSize(120,50)
+        self.restart_button.setStyleSheet(qstyle.blue_button_stylesheet)     
+
+        # add buttons to their layout
+        self.buttons_layout.addWidget(self.back_button)
+        self.buttons_layout.addWidget(self.restart_button)
 
         self.camera_view_layout.addLayout(self.user_computer_layout)
         # self.camera_view_layout.addWidget(self.bottom_text)
         self.camera_view_layout.addLayout(self.result_layout)
-        self.camera_view_layout.addWidget(self.back_button)
-
+        self.camera_view_layout.addLayout(self.buttons_layout)
         self.camera_view.setLayout(self.camera_view_layout)
 
 
@@ -477,7 +490,7 @@ class GUI(QObject):
             self.user_gesture.setText(f"User's Gesture: None")
             self.computer_gesture.setText(f"Computer's Gesture: None")
             self.updateComputerChoice('question_mark')
-            self.result_area.setText(f"Round 1")
+            # self.result_area.setText(f"Round 1")
             self.user_score.setText(f"User's Score: 0")
             self.computer_score.setText(f"Computer's Score: 0")
             self.winner_area.setText("")
