@@ -5,7 +5,7 @@ from Controller.modelController import ModelController
 
 from Controller.cameraController import CameraController
 from Controller.AIController import AIController
-# from Controller.deviceController import DeviceController
+from Controller.deviceController import DeviceController
 
 
 #===================================================================================================
@@ -29,7 +29,7 @@ class MainController:
         ''' Initialize the controllers '''
         self.cameraController = CameraController()
         self.AIController = AIController("./AI/gesture_recognizer.task")
-        # self.deviceController = DeviceController()
+        self.deviceController = DeviceController()
 
         # MVC architecture
         self.viewController = ViewController(self)
@@ -202,11 +202,11 @@ class MainController:
             (bool, str): True if there is a winner, False otherwise. The winner's name'''
         if self.user_score >= self.winning_score:
             self.winner = "User"
-            # self.deviceController.sendWinnerMessage()
+            self.deviceController.sendWinnerMessage()
             return (True, self.winner)
         elif self.computer_score >= self.winning_score:
             self.winner = "Computer"
-            # self.deviceController.sendLoserMessage()
+            self.deviceController.sendLoserMessage()
             return (True, self.winner)
         return (False, None)
 
