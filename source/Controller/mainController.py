@@ -206,11 +206,11 @@ class MainController:
             (bool, str): True if there is a winner, False otherwise. The winner's name'''
         if self.user_score >= self.winning_score:
             self.winner = "User"
-            self.deviceController.sendWinnerMessage()
+            # self.deviceController.sendWinnerMessage()
             return (True, self.winner)
         elif self.computer_score >= self.winning_score:
             self.winner = "Computer"
-            self.deviceController.sendLoserMessage()
+            # self.deviceController.sendLoserMessage()
             return (True, self.winner)
         return (False, None)
 
@@ -231,10 +231,17 @@ class MainController:
         ''' Debug: Show the camera feed '''
         self.cameraController._viewCameraLoop()
 
+    def on_exit(self):
+        ''' Handle the exit process '''
+        self.releaseCamera()
+        self.viewController.on_exit()
+        print("Exiting the application")
+
     
 
 if __name__ == '__main__':
     # app = QApplication(sys.argv)
     controller = MainController()
     controller.run()
+    
     
