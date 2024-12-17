@@ -16,10 +16,10 @@ This project was developed as part of the Interactive Technologies course and ai
   <li>Georgios Stergiopoulos</li>
 </ul>
 <h2>Development:</h2>
-<h3>Code Architecture</h3>
-<img src="/media/architecture.svg" style="width: 50%; height:50%;">
 <h3>Gesture Recognition: </h3>
 <img src="/media/mediapipe.png" style="width: 50%; height:50%;">
+<h3>Code Architecture</h3>
+<img src="/media/architecture.svg" style="width: 50%; height:50%;">
 <h3>The Game:</h3>
 <ul>
   <li>Sign-in/ Register functionality</li>
