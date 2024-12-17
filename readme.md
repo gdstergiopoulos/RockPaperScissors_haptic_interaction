@@ -28,7 +28,7 @@ This project was developed as part of the Interactive Technologies course and ai
   <li>Haptic feedback when game is decided</li>
 </ul>
 <img src="/media/home_Screen.png" style="width: 50%; height:50%;">
-<img src="/media/sign_in.png" style="width: 30%; height:30%;">
+<img src="/media/sign_in.png" style="width: 50%; height:50%;">
 <img src="/media/game_screen.png" style="width: 50%; height:50%;">
 <h3>Haptic Feedback</h3>
 <img src="/media/Screenshot 2024-12-13 192750.png" style="width: 50%; height:50%;">
